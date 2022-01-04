@@ -16,6 +16,9 @@
     <Filter Include="pluginsdk">
       <UniqueIdentifier>{9dd77c3d-36cc-4f47-857e-68b5e84f8b74}</UniqueIdentifier>
     </Filter>
+    <Filter Include="pybind11">
+      <UniqueIdentifier>{a678c17b-d18b-43bc-8849-f84c0f513b51}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="plugin.cpp">
@@ -100,6 +103,66 @@
     </ClInclude>
     <ClInclude Include="pluginsdk\bridgemain.h">
       <Filter>pluginsdk</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\attr.h">
+      <Filter>pybind11</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\buffer_info.h">
+      <Filter>pybind11</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\cast.h">
+      <Filter>pybind11</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\chrono.h">
+      <Filter>pybind11</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\common.h">
+      <Filter>pybind11</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\complex.h">
+      <Filter>pybind11</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\eigen.h">
+      <Filter>pybind11</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\embed.h">
+      <Filter>pybind11</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\eval.h">
+      <Filter>pybind11</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\functional.h">
+      <Filter>pybind11</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\gil.h">
+      <Filter>pybind11</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\iostream.h">
+      <Filter>pybind11</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\numpy.h">
+      <Filter>pybind11</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\operators.h">
+      <Filter>pybind11</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\options.h">
+      <Filter>pybind11</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\pybind11.h">
+      <Filter>pybind11</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\pytypes.h">
+      <Filter>pybind11</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\stl.h">
+      <Filter>pybind11</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\stl_bind.h">
+      <Filter>pybind11</Filter>
+    </ClInclude>
+    <ClInclude Include="pystream.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

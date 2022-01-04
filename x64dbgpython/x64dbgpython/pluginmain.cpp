@@ -8,6 +8,11 @@ int g_hMenuDisasm;
 int g_hMenuDump;
 int g_hMenuStack;
 
+PLUG_EXPORT void CBMENUENTRY(CBTYPE cbType, PLUG_CB_MENUENTRY* info)
+{
+    PluginHandleMenuCommand(cbType, info);
+}
+
 PLUG_EXPORT bool pluginit(PLUG_INITSTRUCT* initStruct)
 {
     initStruct->pluginVersion = PLUGIN_VERSION;

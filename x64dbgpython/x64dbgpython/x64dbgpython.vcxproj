@@ -56,6 +56,26 @@
     <ClInclude Include="pluginsdk\_scriptapi_register.h" />
     <ClInclude Include="pluginsdk\_scriptapi_stack.h" />
     <ClInclude Include="pluginsdk\_scriptapi_symbol.h" />
+    <ClInclude Include="pybind11\attr.h" />
+    <ClInclude Include="pybind11\buffer_info.h" />
+    <ClInclude Include="pybind11\cast.h" />
+    <ClInclude Include="pybind11\chrono.h" />
+    <ClInclude Include="pybind11\common.h" />
+    <ClInclude Include="pybind11\complex.h" />
+    <ClInclude Include="pybind11\eigen.h" />
+    <ClInclude Include="pybind11\embed.h" />
+    <ClInclude Include="pybind11\eval.h" />
+    <ClInclude Include="pybind11\functional.h" />
+    <ClInclude Include="pybind11\gil.h" />
+    <ClInclude Include="pybind11\iostream.h" />
+    <ClInclude Include="pybind11\numpy.h" />
+    <ClInclude Include="pybind11\operators.h" />
+    <ClInclude Include="pybind11\options.h" />
+    <ClInclude Include="pybind11\pybind11.h" />
+    <ClInclude Include="pybind11\pytypes.h" />
+    <ClInclude Include="pybind11\stl.h" />
+    <ClInclude Include="pybind11\stl_bind.h" />
+    <ClInclude Include="pystream.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="pluginsdk\x32bridge.lib" />
@@ -171,6 +191,9 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <Optimization>MinSpace</Optimization>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>Default</LanguageStandard>
+      <LanguageStandard_C>Default</LanguageStandard_C>
+      <AdditionalIncludeDirectories>D:\Python3\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -178,6 +201,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <AdditionalLibraryDirectories>D:\Python3\libs</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -207,6 +231,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <Optimization>MinSpace</Optimization>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalIncludeDirectories>D:\Python3\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -214,6 +239,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <AdditionalLibraryDirectories>D:\Python3\libs</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
