@@ -1,5 +1,3 @@
-
-
 #include "plugin.h"
 #include "pybind11\embed.h"
 #include "pybind11\iostream.h"
@@ -10,7 +8,7 @@ py::scoped_interpreter* pGuard = nullptr;
 CPystream pPystream;
 
 //Function define
-bool OpenFileDialog(char Buffer[MAX_PATH]);
+bool OpenFileDialog(char*, size_t);
 
 enum menu_entry
 {
@@ -24,7 +22,8 @@ void PluginHandleMenuCommand(CBTYPE cbType, PLUG_CB_MENUENTRY* info)
     {
     case menu_entry::MENU_RUN_SCRIPT:
         char fileBuffer[MAX_PATH];
-        if (OpenFileDialog(fileBuffer))
+
+        if (OpenFileDialog(fileBuffer, sizeof(fileBuffer)))
         {
             try
             {
@@ -36,11 +35,10 @@ void PluginHandleMenuCommand(CBTYPE cbType, PLUG_CB_MENUENTRY* info)
                 _plugin_logprint(e.what());
             }
         }
-        else
-            MessageBox(NULL, L"Failed to open python script file", L"Error", MB_OK | MB_ICONEXCLAMATION);
         break;
     case menu_entry::MENU_ABOUT:
-        MessageBoxA(g_hwndDlg, "x64dbg Python by Elvis", PLUGIN_NAME " Plugin", MB_ICONINFORMATION);
+        MessageBoxA(g_hwndDlg,  PLUGIN_NAME" by Elvis\n"
+                                "Warning: This plugin contains a lot of bugs", PLUGIN_NAME, MB_ICONINFORMATION);
         break;
     default:
         break;
@@ -84,8 +82,6 @@ bool pluginInit(PLUG_INITSTRUCT* initStruct)
     py::module::import("sys").attr("stdout") = pPystream;
     py::module::import("sys").attr("stderr") = pPystream;
 
-
-    //py::scoped_ostream_redirect stream(_plugin_logprint, py_stdout);
     return true;
 }
 
@@ -103,29 +99,30 @@ void pluginStop()
 void pluginSetup()
 {
     _plugin_menuaddentry(g_hMenu, menu_entry::MENU_RUN_SCRIPT, "&Run Script");
+    _plugin_menuaddseparator(g_hMenu);
     _plugin_menuaddentry(g_hMenu, menu_entry::MENU_ABOUT, "&About");
+
+    //Set hotkey
+    _plugin_menuentrysethotkey(g_pluginHandle, menu_entry::MENU_RUN_SCRIPT, "Alt+F7");
 }
 
-bool OpenFileDialog(char Buffer[MAX_PATH])
+bool OpenFileDialog(char* buffer, size_t bufferSize)
 {
     OPENFILENAMEA sOpenFileName = { 0 };
-    const char szFilterString[] = "Python files\0*.py\0\0";
-    const char szDialogTitle[] = "Select script file...";
+    ZeroMemory(buffer, bufferSize);
+
     sOpenFileName.lStructSize = sizeof(sOpenFileName);
-    sOpenFileName.lpstrFilter = szFilterString;
+    sOpenFileName.lpstrFilter = "Python files\0*.py\0All\0*.*\0";
     sOpenFileName.nFilterIndex = 1;
-    sOpenFileName.lpstrFile = Buffer;
+    sOpenFileName.lpstrFile = buffer;
     sOpenFileName.nMaxFile = MAX_PATH;
     sOpenFileName.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
-    sOpenFileName.lpstrTitle = szDialogTitle;
-    sOpenFileName.hwndOwner = GuiGetWindowHandle();
+    sOpenFileName.lpstrTitle = "Select script file...";
+    sOpenFileName.lpstrFileTitle = NULL;
+    sOpenFileName.nMaxFileTitle = 0;
+    sOpenFileName.lpstrInitialDir = NULL;
+    sOpenFileName.hwndOwner = g_hwndDlg;
     return (FALSE != GetOpenFileNameA(&sOpenFileName));
-}
-
-PYBIND11_EMBEDDED_MODULE(x64dbg, m) 
-{
-    // `m` is a `py::module_` which is used to bind functions and classes
-    m.def("log", _plugin_logprint);
 }
 
 PYBIND11_EMBEDDED_MODULE(sys_pystream, module)
