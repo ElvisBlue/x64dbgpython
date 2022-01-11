@@ -1,6 +1,7 @@
 #include <Windows.h>
 #include "pybind11/embed.h"
 #include "pybind11/stl_bind.h"
+#include "pybind11/stl.h"
 
 #include "pluginsdk/_plugins.h"
 
@@ -37,10 +38,48 @@ namespace PyWrapper
 			duint instructioncount;
 		};
 
-		bool GetList(py::list& list)
+		pyArgumentInfo* GetInfo(duint addr)
 		{
-			//TODO: Write code here
-			return false;
+			Script::Argument::ArgumentInfo tmpInfo = { 0 };
+			if (!Script::Argument::GetInfo(addr, &tmpInfo))
+			{
+				return nullptr;
+			}
+			else
+			{
+				pyArgumentInfo* retData = new pyArgumentInfo();
+				retData->mod = tmpInfo.mod;
+				retData->rvaStart = tmpInfo.rvaStart;
+				retData->manual = tmpInfo.manual;
+				retData->instructioncount = tmpInfo.instructioncount;
+				return retData;
+			}
+		}
+
+		std::vector<pyArgumentInfo>* GetList()
+		{
+			std::vector<pyArgumentInfo>* list = nullptr;
+			ListOf(ArgumentInfo) tmpList = new ListInfo();
+
+			if (Script::Argument::GetList(tmpList))
+			{
+				list = new std::vector<pyArgumentInfo>();
+				std::vector<Script::Argument::ArgumentInfo> argumentInfoList;
+				BridgeList<Script::Argument::ArgumentInfo>::ToVector(tmpList, argumentInfoList, true);
+				for (auto it = argumentInfoList.begin(); it != argumentInfoList.end(); it++)
+				{
+					pyArgumentInfo item;
+					item.instructioncount = it->instructioncount;
+					item.manual = it->manual;
+					item.mod = it->mod;
+					item.rvaEnd = it->rvaEnd;
+					item.rvaStart = it->rvaStart;
+					list->push_back(item);
+				}
+			}
+
+			delete tmpList;
+			return list;
 		}
 	}
 
@@ -237,139 +276,286 @@ namespace PyWrapper
 			std::string undecoratedName;
 		};
 
-		bool InfoFromAddr(duint addr, pyModuleInfo* info)
+		pyModuleInfo* InfoFromAddr(duint addr)
 		{
 			Script::Module::ModuleInfo tmpInfo = { 0 };
-			bool ret = Script::Module::InfoFromAddr(addr, &tmpInfo);
-			info->base = tmpInfo.base;
-			info->entry = tmpInfo.entry;
-			info->name = tmpInfo.name;
-			info->path = tmpInfo.path;
-			info->sectionCount = tmpInfo.sectionCount;
-			info->size = tmpInfo.size;
-			return ret;
+			if (Script::Module::InfoFromAddr(addr, &tmpInfo))
+			{
+				pyModuleInfo* info = new pyModuleInfo();
+				info->base = tmpInfo.base;
+				info->entry = tmpInfo.entry;
+				info->name = tmpInfo.name;
+				info->path = tmpInfo.path;
+				info->sectionCount = tmpInfo.sectionCount;
+				info->size = tmpInfo.size;
+				return info;
+			}
+			else
+				return nullptr;
 		}
 
-		bool InfoFromName(const char* name, pyModuleInfo* info)
+		pyModuleInfo* InfoFromName(const char* name)
 		{
 			Script::Module::ModuleInfo tmpInfo = { 0 };
-			bool ret = Script::Module::InfoFromName(name, &tmpInfo);
-			info->base = tmpInfo.base;
-			info->entry = tmpInfo.entry;
-			info->name = tmpInfo.name;
-			info->path = tmpInfo.path;
-			info->sectionCount = tmpInfo.sectionCount;
-			info->size = tmpInfo.size;
-			return ret;
+			if (Script::Module::InfoFromName(name, &tmpInfo))
+			{
+				pyModuleInfo* info = new pyModuleInfo();
+				info->base = tmpInfo.base;
+				info->entry = tmpInfo.entry;
+				info->name = tmpInfo.name;
+				info->path = tmpInfo.path;
+				info->sectionCount = tmpInfo.sectionCount;
+				info->size = tmpInfo.size;
+				return info;
+			}
+			else
+				return nullptr;
 		}
 
-		bool NameFromAddr(duint addr, std::string& name)
+		std::string NameFromAddr(duint addr)
 		{
 			char retName[MAX_MODULE_SIZE] = { 0 };
-			bool ret = Script::Module::NameFromAddr(addr, retName);
-			name = retName;
-			return ret;
+			if (Script::Module::NameFromAddr(addr, retName))
+				return retName;
+			else
+				return "";
 		}
 
-		bool PathFromAddr(duint addr, std::string& path)
+		std::string PathFromAddr(duint addr)
 		{
 			char retPath[MAX_PATH] = {0};
-			bool ret = Script::Module::PathFromAddr(addr, retPath);
-			path = retPath;
-			return ret;
+			if (Script::Module::PathFromAddr(addr, retPath))
+				return retPath;
+			else
+				return "";
 		}
 
-		bool PathFromName(const char* name, std::string& path)
+		std::string PathFromName(const char* name)
 		{
 			char retPath[MAX_PATH] = { 0 };
-			bool ret = Script::Module::PathFromName(name, retPath);
-			path = retPath;
-			return ret;
+			if (Script::Module::PathFromName(name, retPath))
+				return retPath;
+			else
+				return "";
 		}
 
-		bool SectionFromAddr(duint addr, int number, pyModuleSectionInfo* section)
+		pyModuleSectionInfo* SectionFromAddr(duint addr, int number)
 		{
 			Script::Module::ModuleSectionInfo tmpInfo = { 0 };
-			bool ret = Script::Module::SectionFromAddr(addr, number, &tmpInfo);
-			section->addr = tmpInfo.addr;
-			section->name = tmpInfo.name;
-			section->size = tmpInfo.size;
-			return ret;
+			if (Script::Module::SectionFromAddr(addr, number, &tmpInfo))
+			{
+				pyModuleSectionInfo* section = new pyModuleSectionInfo();
+				section->addr = tmpInfo.addr;
+				section->name = tmpInfo.name;
+				section->size = tmpInfo.size;
+				return section;
+			}
+			else
+				return nullptr;
 		}
 
-		bool SectionFromName(const char* name, int number, pyModuleSectionInfo* section)
+		pyModuleSectionInfo* SectionFromName(const char* name, int number)
 		{
 			Script::Module::ModuleSectionInfo tmpInfo = { 0 };
-			bool ret = Script::Module::SectionFromName(name, number, &tmpInfo);
-			section->addr = tmpInfo.addr;
-			section->name = tmpInfo.name;
-			section->size = tmpInfo.size;
-			return ret;
+			if (Script::Module::SectionFromName(name, number, &tmpInfo))
+			{
+				pyModuleSectionInfo* section = new pyModuleSectionInfo();
+				section->addr = tmpInfo.addr;
+				section->name = tmpInfo.name;
+				section->size = tmpInfo.size;
+			}
+				return nullptr;
 		}
 
-		bool SectionListFromAddr(duint addr, py::list list)
+		std::vector<pyModuleSectionInfo>* SectionListFromAddr(duint addr)
 		{
-			//TODO: Write code here
-			return false;
+			std::vector<pyModuleSectionInfo>* list = nullptr;
+			ListOf(Script::Module::ModuleSectionInfo) tmpList = new ListInfo();
+			if (Script::Module::SectionListFromAddr(addr, tmpList))
+			{
+				list = new std::vector<pyModuleSectionInfo>();
+				std::vector<Script::Module::ModuleSectionInfo> moduleSectionInfoList;
+				BridgeList<Script::Module::ModuleSectionInfo>::ToVector(tmpList, moduleSectionInfoList, true);
+				for (auto it = moduleSectionInfoList.begin(); it != moduleSectionInfoList.end(); it++)
+				{
+					pyModuleSectionInfo item = { 0 };
+					item.addr = it->addr;
+					item.name = it->name;
+					item.size = it->size;
+					list->push_back(item);
+				}
+			}
+			delete tmpList;
+			return list;
 		}
 
-		bool SectionListFromName(const char* name, py::list list)
+		std::vector<pyModuleSectionInfo>* SectionListFromName(const char* name)
 		{
-			//TODO: Write code here
-			return false;
+			std::vector<pyModuleSectionInfo>* list = nullptr;
+			ListOf(Script::Module::ModuleSectionInfo) tmpList = new ListInfo();
+			if (Script::Module::SectionListFromName(name, tmpList))
+			{
+				list = new std::vector<pyModuleSectionInfo>();
+				std::vector<Script::Module::ModuleSectionInfo> moduleSectionInfoList;
+				BridgeList<Script::Module::ModuleSectionInfo>::ToVector(tmpList, moduleSectionInfoList, true);
+				for (auto it = moduleSectionInfoList.begin(); it != moduleSectionInfoList.end(); it++)
+				{
+					pyModuleSectionInfo item = { 0 };
+					item.addr = it->addr;
+					item.name = it->name;
+					item.size = it->size;
+					list->push_back(item);
+				}
+			}
+			delete tmpList;
+			return list;
 		}
 
-		bool GetMainModuleInfo(pyModuleInfo* info)
+		pyModuleInfo* GetMainModuleInfo()
 		{
 			Script::Module::ModuleInfo tmpInfo = { 0 };
-			bool ret = Script::Module::GetMainModuleInfo(&tmpInfo);
-			info->base = tmpInfo.base;
-			info->entry = tmpInfo.entry;
-			info->name = tmpInfo.name;
-			info->path = tmpInfo.path;
-			info->sectionCount = tmpInfo.sectionCount;
-			info->size = tmpInfo.size;
-			return ret;
+			if (Script::Module::GetMainModuleInfo(&tmpInfo))
+			{
+				pyModuleInfo* info = new pyModuleInfo();
+				info->base = tmpInfo.base;
+				info->entry = tmpInfo.entry;
+				info->name = tmpInfo.name;
+				info->path = tmpInfo.path;
+				info->sectionCount = tmpInfo.sectionCount;
+				info->size = tmpInfo.size;
+				return info;
+			}
+			else
+				return nullptr;
 		}
 
-		bool GetMainModuleName(std::string& name)
+		std::string GetMainModuleName()
 		{
 			char retName[MAX_MODULE_SIZE] = { 0 };
-			bool ret = Script::Module::GetMainModuleName(retName);
-			name = retName;
-			return ret;
+			Script::Module::GetMainModuleName(retName);
+			return retName;
 		}
 
-		bool GetMainModulePath(std::string& path)
+		std::string GetMainModulePath()
 		{
 			char retPath[MAX_PATH] = { 0 };
-			bool ret = Script::Module::GetMainModulePath(retPath);
-			path = retPath;
-			return ret;
+			Script::Module::GetMainModulePath(retPath);
+			return retPath;
 		}
 
-		bool GetMainModuleSectionList(py::list list)
+		std::vector<pyModuleSectionInfo>* GetMainModuleSectionList()
 		{
-			//TODO: Write code here
-			return false;
+			std::vector<pyModuleSectionInfo>* list = nullptr;
+			ListOf(Script::Module::ModuleSectionInfo) tmpList = new ListInfo();
+			if (Script::Module::GetMainModuleSectionList(tmpList))
+			{
+				list = new std::vector<pyModuleSectionInfo>();
+				std::vector<Script::Module::ModuleSectionInfo> sectionList;
+				BridgeList<Script::Module::ModuleSectionInfo>::ToVector(tmpList, sectionList, true);
+				for (auto it = sectionList.begin(); it != sectionList.end(); it++)
+				{
+					pyModuleSectionInfo item;
+					item.addr = it->addr;
+					item.name = it->name;
+					item.size = it->size;
+					list->push_back(item);
+				}
+			}
+			delete tmpList;
+			return list;
 		}
 
-		bool GetList(py::list list)
+		std::vector<pyModuleInfo>* GetList()
 		{
-			//TODO: Write code here
-			return false;
+			std::vector<pyModuleInfo>* list = nullptr;
+			ListOf(Script::Module::ModuleInfo) tmpList = new ListInfo();
+			if (Script::Module::GetList(tmpList))
+			{
+				list = new std::vector<pyModuleInfo>();
+				std::vector<Script::Module::ModuleInfo> moduleInfoList;
+				BridgeList<Script::Module::ModuleInfo>::ToVector(tmpList, moduleInfoList, true);
+				for (auto it = moduleInfoList.begin(); it != moduleInfoList.end(); it++)
+				{
+					pyModuleInfo item;
+					item.base = it->base;
+					item.entry = it->entry;
+					item.name = it->name;
+					item.path = it->path;
+					item.sectionCount = it->sectionCount;
+					item.size = it->size;
+					list->push_back(item);
+				}
+			}
+			delete tmpList;
+			return list;
 		}
 
-		bool GetExports(const pyModuleInfo* mod, py::list list)
+		std::vector<pyModuleExport>* GetExports(const pyModuleInfo* mod)
 		{
-			//TODO: Write code here
-			return false;
+			std::vector<pyModuleExport>* list = nullptr;
+			ListOf(Script::Module::ModuleExport) tmpList = new ListInfo();
+
+			Script::Module::ModuleInfo tmpMod = { 0 };
+			tmpMod.base = mod->base;
+			tmpMod.entry = mod->entry;
+			strcpy_s(tmpMod.name, mod->name.c_str());
+			strcpy_s(tmpMod.path, mod->path.c_str());
+			tmpMod.sectionCount = mod->sectionCount;
+			tmpMod.size = mod->size;
+			if (Script::Module::GetExports(&tmpMod, tmpList))
+			{
+				list = new std::vector<pyModuleExport>();
+				std::vector<Script::Module::ModuleExport> moduleExportList;
+				BridgeList<Script::Module::ModuleExport>::ToVector(tmpList, moduleExportList, true);
+				for (auto it = moduleExportList.begin(); it != moduleExportList.end(); it++)
+				{
+					pyModuleExport item;
+					item.forwarded = it->forwarded;
+					item.forwardName = it->forwardName;
+					item.name = it->name;
+					item.ordinal = it->ordinal;
+					item.rva = it->rva;
+					item.undecoratedName = it->undecoratedName;
+					item.va = it->va;
+					list->push_back(item);
+				}
+			}
+
+			delete tmpList;
+			return list;
 		}
 
-		bool GetImports(const pyModuleInfo* mod, py::list list)
+		std::vector<pyModuleImport>* GetImports(const pyModuleInfo* mod)
 		{
-			//TODO: Write code here
-			return false;
+			std::vector<pyModuleImport>* list = nullptr;
+			ListOf(Script::Module::ModuleImport) tmpList = new ListInfo();
+
+			Script::Module::ModuleInfo tmpMod = { 0 };
+			tmpMod.base = mod->base;
+			tmpMod.entry = mod->entry;
+			strcpy_s(tmpMod.name, mod->name.c_str());
+			strcpy_s(tmpMod.path, mod->path.c_str());
+			tmpMod.sectionCount = mod->sectionCount;
+			tmpMod.size = mod->size;
+
+			if (Script::Module::GetImports(&tmpMod, tmpList))
+			{
+				list = new std::vector<pyModuleImport>();
+				std::vector<Script::Module::ModuleImport> moduleImportList;
+				BridgeList<Script::Module::ModuleImport>::ToVector(tmpList, moduleImportList, true);
+				for (auto it = moduleImportList.begin(); it != moduleImportList.end(); it++)
+				{
+					pyModuleImport item;
+					item.iatRva = it->iatRva;
+					item.iatVa = it->iatVa;
+					item.name = it->name;
+					item.ordinal = it->ordinal;
+					item.undecoratedName = it->undecoratedName;
+					list->push_back(item);
+				}
+			}
+			delete tmpList;
+			return list;
 		}
 	}
 
@@ -411,7 +597,7 @@ PYBIND11_EMBEDDED_MODULE(x64dbg, m)
 	//so we ignore function SCRIPT_EXPORT bool Add(const ArgumentInfo* info)
 	mArgument.def("Add", static_cast<bool (*)(duint, duint, bool, duint)>(&Argument::Add));
 	mArgument.def("Get", &Argument::Get);
-	mArgument.def("GetInfo", &Argument::GetInfo);
+	mArgument.def("GetInfo", &PyWrapper::Argument::GetInfo);
 	mArgument.def("Overlaps", &Argument::Overlaps);
 	mArgument.def("Delete", &Argument::Delete);
 	mArgument.def("DeleteRange", &Argument::DeleteRange);
