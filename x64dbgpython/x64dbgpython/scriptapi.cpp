@@ -85,20 +85,43 @@ namespace PyWrapper
 
 	namespace Assembler
 	{
-		bool AssembleEx(duint addr, unsigned char* dest, int* size, const char* instruction, std::string &error)
+		py::bytes Assemble(duint addr, const char* instruction)
 		{
-			char retError[MAX_ERROR_SIZE] = {0};
-			bool ret = Script::Assembler::AssembleEx(addr, dest, size, instruction, retError);
-			error = retError;
-			return ret;
+			unsigned char dest[16] = { 0 };
+			int size = 0;
+			if (Script::Assembler::Assemble(addr, dest, &size, instruction))
+				return py::bytes((char*)dest, size);
+			else
+				return nullptr;
 		}
 
-		bool AssembleMemEx(duint addr, const char* instruction, int* size, std::string &error, bool fillnop)
+		py::bytes AssembleEx(duint addr, const char* instruction)
+		{
+			//Crash. Dunno why??
+			//TODO: Check this
+			char retError[MAX_ERROR_SIZE] = {0};
+			unsigned char dest[16] = { 0 };
+			int size = 0;
+			if (Script::Assembler::AssembleEx(addr, dest, &size, instruction, retError))
+				return py::bytes((char*)dest, size);
+			else
+			{
+				_plugin_logprintf("AssembleEx error: %s\n", retError);
+				return nullptr;
+			}
+		}
+
+		bool AssembleMemEx(duint addr, const char* instruction, bool fillnop)
 		{
 			char retError[MAX_ERROR_SIZE] = {0};
-			bool ret = Script::Assembler::AssembleMemEx(addr, instruction, size, retError, fillnop);
-			error = retError;
-			return ret;
+			int size = 0;
+			if (Script::Assembler::AssembleMemEx(addr, instruction, &size, retError, fillnop))
+				return true;
+			else
+			{
+				_plugin_logprintf("AssembleEx error: %s\n", retError);
+				return false;
+			}
 		}
 	}
 
@@ -112,22 +135,42 @@ namespace PyWrapper
 		};
 
 
-		bool GetInfo(duint addr, pyBookmarkInfo* info)
+		pyBookmarkInfo* GetInfo(duint addr)
 		{
 			Script::Bookmark::BookmarkInfo tmpInfo = { 0 };
-			bool ret = Script::Bookmark::GetInfo(addr, &tmpInfo);
-
-			info->manual = tmpInfo.manual;
-			info->mod = tmpInfo.mod;
-			info->rva = tmpInfo.rva;
-
-			return ret;
+			if (Script::Bookmark::GetInfo(addr, &tmpInfo))
+			{
+				pyBookmarkInfo* info = new pyBookmarkInfo();
+				info->manual = tmpInfo.manual;
+				info->mod = tmpInfo.mod;
+				info->rva = tmpInfo.rva;
+				return info;
+			}
+			else
+				return nullptr;
 		}
 
-		bool GetList(py::list& list)
+		std::vector<pyBookmarkInfo>* GetList()
 		{
-			//TODO: Write code here
-			return false;
+			std::vector<pyBookmarkInfo>* list = nullptr;
+			ListOf(BookmarkInfo) tmpList = new ListInfo();
+			if (Script::Bookmark::GetList(tmpList))
+			{
+				list = new std::vector<pyBookmarkInfo>();
+				std::vector<Script::Bookmark::BookmarkInfo> bookmarkInfoList;
+				BridgeList<Script::Bookmark::BookmarkInfo>::ToVector(tmpList, bookmarkInfoList, true);
+				for (auto it = bookmarkInfoList.begin(); it != bookmarkInfoList.end(); it++)
+				{
+					pyBookmarkInfo item;
+					item.manual = it->manual;
+					item.mod = it->mod;
+					item.rva = it->rva;
+					list->push_back(item);
+				}
+			}
+
+			delete tmpList;
+			return list;
 		}
 	}
 
@@ -141,31 +184,50 @@ namespace PyWrapper
 			bool manual;
 		};
 
-		bool Get(duint addr, std::string& text)
+		std::string Get(duint addr)
 		{
 			char retText[MAX_COMMENT_SIZE] = { 0 };
-			bool ret = Script::Comment::Get(addr, retText);
-			text = retText;
-			return ret;
+			Script::Comment::Get(addr, retText);
+			return retText;
 		}
 
-		bool GetInfo(duint addr, pyCommentInfo* info)
+		pyCommentInfo* GetInfo(duint addr)
 		{
 			Script::Comment::CommentInfo tmpInfo = { 0 };
-			bool ret = Script::Comment::GetInfo(addr, &tmpInfo);
-			
-			info->manual = tmpInfo.manual;
-			info->mod = tmpInfo.mod;
-			info->rva = tmpInfo.rva;
-			info->text = tmpInfo.text;
-
-			return ret;
+			if (Script::Comment::GetInfo(addr, &tmpInfo))
+			{
+				pyCommentInfo* info = new pyCommentInfo();
+				info->manual = tmpInfo.manual;
+				info->mod = tmpInfo.mod;
+				info->rva = tmpInfo.rva;
+				info->text = tmpInfo.text;
+				return info;
+			}
+			else
+				return nullptr;
 		}
 
-		bool GetList(py::list list)
+		std::vector<pyCommentInfo>* GetList()
 		{
-			//TODO: Write code here
-			return false;
+			std::vector<pyCommentInfo>* list = nullptr;
+			ListOf(Script::Comment::CommentInfo) tmpList = new ListInfo();
+			if (Script::Comment::GetList(tmpList))
+			{
+				list = new std::vector<pyCommentInfo>();
+				std::vector<Script::Comment::CommentInfo> commentInfoList;
+				BridgeList<Script::Comment::CommentInfo>::ToVector(tmpList, commentInfoList, true);
+				for (auto it = commentInfoList.begin(); it != commentInfoList.end(); it++)
+				{
+					pyCommentInfo item;
+					item.manual = it->manual;
+					item.mod = it->mod;
+					item.rva = it->rva;
+					item.text = it->text;
+					list->push_back(item);
+				}
+			}
+			delete tmpList;
+			return list;
 		}
 	}
 
@@ -180,24 +242,45 @@ namespace PyWrapper
 			duint instructioncount;
 		};
 
-		bool GetInfo(duint addr, pyFunctionInfo* info)
+		pyFunctionInfo* GetInfo(duint addr)
 		{
 			Script::Function::FunctionInfo tmpInfo = { 0 };
-			bool ret = Script::Function::GetInfo(addr, &tmpInfo);
-
-			info->mod = tmpInfo.mod;
-			info->rvaStart = tmpInfo.rvaStart;
-			info->rvaEnd = tmpInfo.rvaEnd;
-			info->manual = tmpInfo.manual;
-			info->instructioncount = tmpInfo.instructioncount;
-
-			return ret;
+			if (Script::Function::GetInfo(addr, &tmpInfo))
+			{
+				pyFunctionInfo* info = new pyFunctionInfo();
+				info->mod = tmpInfo.mod;
+				info->rvaStart = tmpInfo.rvaStart;
+				info->rvaEnd = tmpInfo.rvaEnd;
+				info->manual = tmpInfo.manual;
+				info->instructioncount = tmpInfo.instructioncount;
+				return info;
+			}
+			else
+				return nullptr;
 		}
 
-		bool GetList(py::list list)
+		std::vector<pyFunctionInfo>* GetList()
 		{
-			//TODO: Write code here
-			return false;
+			std::vector<pyFunctionInfo>* list = nullptr;
+			ListOf(Script::Function::FunctionInfo) tmpList = new ListInfo();
+			if (Script::Function::GetList(tmpList))
+			{
+				list = new std::vector<pyFunctionInfo>();
+				std::vector<Script::Function::FunctionInfo> functionInfoList;
+				BridgeList<Script::Function::FunctionInfo>::ToVector(tmpList, functionInfoList, true);
+				for (auto it = functionInfoList.begin(); it != functionInfoList.end(); it++)
+				{
+					pyFunctionInfo item;
+					item.instructioncount = it->instructioncount;
+					item.manual = it->manual;
+					item.mod = it->mod;
+					item.rvaEnd = it->rvaEnd;
+					item.rvaStart = it->rvaStart;
+					list->push_back(item);
+				}
+			}
+			delete tmpList;
+			return list;
 		}
 	}
 
@@ -211,29 +294,51 @@ namespace PyWrapper
 			bool manual;
 		};
 
-		bool Get(duint addr, std::string& text)
+		std::string Get(duint addr)
 		{
 			char retText[MAX_LABEL_SIZE] = { 0 };
-			bool ret = Script::Label::Get(addr, retText);
-			text = retText;
-			return ret;
+			Script::Label::Get(addr, retText);
+			return retText;
 		}
 
-		bool GetInfo(duint addr, pyLabelInfo* info)
+		pyLabelInfo* GetInfo(duint addr)
 		{
 			Script::Label::LabelInfo tmpInfo = { 0 };
-			bool ret = Script::Label::GetInfo(addr, &tmpInfo);
-			info->manual = tmpInfo.manual;
-			info->mod = tmpInfo.mod;
-			info->rva = tmpInfo.rva;
-			info->text = tmpInfo.text;
-			return ret;
+			if (Script::Label::GetInfo(addr, &tmpInfo))
+			{
+				pyLabelInfo* info = new pyLabelInfo();
+				info->manual = tmpInfo.manual;
+				info->mod = tmpInfo.mod;
+				info->rva = tmpInfo.rva;
+				info->text = tmpInfo.text;
+				return info;
+			}
+			else
+				return nullptr;
 		}
 
-		bool GetList(py::list list)
+		std::vector<pyLabelInfo>* GetList()
 		{
-			//TODO: Write code here
-			return false;
+			std::vector<pyLabelInfo>* list = nullptr;
+			ListOf(Script::Label::LabelInfo) tmpList = new ListInfo();
+			if (Script::Label::GetList(tmpList))
+			{
+				list = new std::vector<pyLabelInfo>();
+				std::vector<Script::Label::LabelInfo> labelInfoList;
+				BridgeList<Script::Label::LabelInfo>::ToVector(tmpList, labelInfoList, true);
+				for (auto it = labelInfoList.begin(); it != labelInfoList.end(); it++)
+				{
+					pyLabelInfo item;
+					item.manual = it->manual;
+					item.mod = it->mod;
+					item.rva = it->rva;
+					item.text = it->text;
+					list->push_back(item);
+				}
+			}
+
+			delete tmpList;
+			return list;
 		}
 	}
 
@@ -570,10 +675,29 @@ namespace PyWrapper
 			Script::Symbol::SymbolType type;
 		};
 
-		bool GetList(py::list list)
+		std::vector<pySymbolInfo>* GetList()
 		{
-			//TODO: Write code here
-			return false;
+			std::vector<pySymbolInfo>* list = nullptr;
+			ListOf(Script::Symbol::SymbolInfo) tmpList = new ListInfo();
+			if (Script::Symbol::GetList(tmpList))
+			{
+				list = new std::vector<pySymbolInfo>();
+				std::vector<Script::Symbol::SymbolInfo> symbolInfoList;
+				BridgeList<Script::Symbol::SymbolInfo>::ToVector(tmpList, symbolInfoList, true);
+				for (auto it = symbolInfoList.begin(); it != symbolInfoList.end(); it++)
+				{
+					pySymbolInfo item;
+					item.manual = it->manual;
+					item.mod = it->mod;
+					item.name = it->name;
+					item.rva = it->rva;
+					item.type = it->type;
+					list->push_back(item);
+				}
+			}
+
+			delete tmpList;
+			return list;
 		}
 	}
 }
@@ -606,7 +730,7 @@ PYBIND11_EMBEDDED_MODULE(x64dbg, m)
 
 	//Implement python module Assembler
 	py::module mAssembler = m.def_submodule("Assembler", "x64dbg Assembler python script wrapper");
-	mAssembler.def("Assemble", &Assembler::Assemble);
+	mAssembler.def("Assemble", &PyWrapper::Assembler::Assemble);
 	mAssembler.def("AssembleEx", &PyWrapper::Assembler::AssembleEx);
 	mAssembler.def("AssembleMem", &Assembler::AssembleMem);
 	mAssembler.def("AssembleMemEx", &PyWrapper::Assembler::AssembleMemEx);

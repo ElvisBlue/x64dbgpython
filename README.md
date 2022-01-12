@@ -4,7 +4,7 @@ x64dbg python is a x64dbg plugin allow you to run python script to interactive w
 
 # Wrapper
 
-x64dbg python made some wrapper to fit with python language.
+x64dbg python made some wrapper for easy to use in python language. If you're going to using one of those function below, look at wrapper definition instead.
 
 **Argument**
 
@@ -13,8 +13,45 @@ x64dbg python made some wrapper to fit with python language.
 | `bool GetInfo(duint addr, ArgumentInfo* info)` | `pyArgumentInfo* GetInfo(duint addr)`       |
 | `bool GetList(ListOf(ArgumentInfo) list)`      | `std::vector<pyArgumentInfo>* GetList()`    |
 
+**Assembler**
 
+| Original                                                                             | Wrapper                                                   |
+| ------------------------------------------------------------------------------------ | --------------------------------------------------------- |
+| `bool Assemble(duint addr, unsigned char* dest, int* size, const char* instruction)` | `py::bytes Assemble(duint addr, const char* instruction)` |
+| `AssembleEx(duint addr, unsigned char* dest, int* size, const char* instruction, char* error)` | `py::bytes AssembleEx(duint addr, const char* instruction)` |
+| `bool AssembleMemEx(duint addr, const char* instruction, int* size, char* error, bool fillnop)` | `bool AssembleMemEx(duint addr, const char* instruction, bool fillnop)` |
 
+*AssembleEx and AssembleMemEx now redirect error to x64dbg log*
+
+**Bookmark**
+
+| Original                                       | Wrapper                                     |
+| ---------------------------------------------- | ------------------------------------------- |
+| `bool GetInfo(duint addr, BookmarkInfo* info)` | `pyBookmarkInfo* GetInfo(duint addr)`       |
+| `bool GetList(ListOf(BookmarkInfo) list)`      | `std::vector<pyBookmarkInfo>* GetList()`    |
+
+**Comment**
+
+| Original                                       | Wrapper                                     |
+| ---------------------------------------------- | ------------------------------------------- |
+| `bool Get(duint addr, char* text)`             | `std::string Get(duint addr)`               |
+| `bool GetInfo(duint addr, CommentInfo* info)`  | `pyCommentInfo* GetInfo(duint addr)`        |
+| `bool GetList(ListOf(CommentInfo) list)`       | `std::vector<pyCommentInfo>* GetList()`     |
+
+**Function**
+
+| Original                                       | Wrapper                                     |
+| ---------------------------------------------- | ------------------------------------------- |
+| `GetInfo(duint addr, FunctionInfo* info)`      | `pyFunctionInfo* GetInfo(duint addr)`       |
+| `bool GetList(ListOf(FunctionInfo) list)`      | `std::vector<pyFunctionInfo>* GetList()`    |
+
+**Label**
+
+| Original                                       | Wrapper                                     |
+| ---------------------------------------------- | ------------------------------------------- |
+| `bool Get(duint addr, char* text)`             | `std::string Get(duint addr)`               |
+| `bool GetInfo(duint addr, LabelInfo* info)`    | `pyLabelInfo* GetInfo(duint addr)`          |
+| `bool GetList(ListOf(LabelInfo) list)`         | `std::vector<pyLabelInfo>* GetList()`       |
 
 **Module**
 
@@ -36,3 +73,15 @@ x64dbg python made some wrapper to fit with python language.
 | `bool GetList(ListOf(ModuleInfo) list)`                 | `std::vector<pyModuleInfo>* GetList()`         |
 | `bool GetExports(const ModuleInfo* mod, ListOf(ModuleExport) list)` | `std::vector<pyModuleExport>* GetExports(const pyModuleInfo* mod)` |
 | `bool GetImports(const ModuleInfo* mod, ListOf(ModuleImport) list)` | `std::vector<pyModuleImport>* GetImports(const pyModuleInfo* mod)` |
+
+**Symbol**
+
+| Original                                       | Wrapper                                     |
+| ---------------------------------------------- | ------------------------------------------- |
+| `bool GetList(ListOf(SymbolInfo) list)`        | `std::vector<pySymbolInfo>* GetList()`      |
+
+
+# Credits
+ - [pybind11](https://github.com/pybind/pybind11)
+ - [VC-LTL](https://github.com/Chuyu-Team/VC-LTL)
+ - [x64dbg](https://github.com/x64dbg/x64dbg)
