@@ -1,6 +1,6 @@
 # x64dbg python
 
-x64dbg python is a x64dbg plugin allow you to run python script to interactive with x64dbg in python3. x64dbg python provide script api similar to `_scriptapi_*.h` header in plugin SDK. You can look at folder "Sample script" for example
+x64dbg python is a x64dbg plugin allow you to run python script to interactive with x64dbg in python3. x64dbg python provide script api similar to `_scriptapi_*.h` header in plugin SDK. You can look at folder "example script" for example
 
 # Wrapper
 
@@ -18,7 +18,7 @@ x64dbg python made some wrapper for easy to use in python language. If you're go
 | Original                                                                             | Wrapper                                                   |
 | ------------------------------------------------------------------------------------ | --------------------------------------------------------- |
 | `bool Assemble(duint addr, unsigned char* dest, int* size, const char* instruction)` | `py::bytes Assemble(duint addr, const char* instruction)` |
-| `AssembleEx(duint addr, unsigned char* dest, int* size, const char* instruction, char* error)` | `py::bytes AssembleEx(duint addr, const char* instruction)` |
+| `bool AssembleEx(duint addr, unsigned char* dest, int* size, const char* instruction, char* error)` | `py::bytes AssembleEx(duint addr, const char* instruction)` |
 | `bool AssembleMemEx(duint addr, const char* instruction, int* size, char* error, bool fillnop)` | `bool AssembleMemEx(duint addr, const char* instruction, bool fillnop)` |
 
 *AssembleEx and AssembleMemEx now redirect error to x64dbg log*
