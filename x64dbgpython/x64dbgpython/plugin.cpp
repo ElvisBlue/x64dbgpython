@@ -4,8 +4,9 @@
 #include "pystream.h"
 
 namespace py = pybind11;
-py::scoped_interpreter* pGuard = nullptr;
 CPystream pPystream;
+bool g_IsScriptRunning = false;
+HANDLE g_hThread = NULL;
 
 //Function define
 bool OpenFileDialog(char*, size_t);
@@ -13,28 +14,56 @@ bool OpenFileDialog(char*, size_t);
 enum menu_entry
 {
     MENU_RUN_SCRIPT,
+    MENU_CANCEL_SCRIPT,
     MENU_ABOUT
 };
+
+void __stdcall PyExecuteFileThread(char* fileBuffer)
+{
+    g_IsScriptRunning = true;
+    try
+    {
+        py::object scope = py::module_::import("__main__").attr("__dict__");
+        py::eval_file(fileBuffer, scope);
+    }
+    catch (py::error_already_set& e)
+    {
+        _plugin_logprint(e.what());
+    }
+    g_IsScriptRunning = false;
+
+    //fileBuffer is dynamic memory allocated by malloc
+    //Need to be free before exit thread
+    free(fileBuffer);
+}
 
 void PluginHandleMenuCommand(CBTYPE cbType, PLUG_CB_MENUENTRY* info)
 {
     switch (info->hEntry)
     {
     case menu_entry::MENU_RUN_SCRIPT:
-        char fileBuffer[MAX_PATH];
-
+    {
+        char* fileBuffer = (char*)malloc(MAX_PATH);
+        memset(fileBuffer, 0, MAX_PATH);
+        if (g_IsScriptRunning)
+        {
+            MessageBoxA(g_hwndDlg, "Another script is running", PLUGIN_NAME, MB_OK | MB_ICONEXCLAMATION);
+            break;
+        }
         if (OpenFileDialog(fileBuffer, sizeof(fileBuffer)))
         {
-            try
-            {
-                py::object scope = py::module_::import("__main__").attr("__dict__");
-                py::eval_file(fileBuffer, scope);
-            }
-            catch (py::error_already_set& e)
-            {
-                _plugin_logprint(e.what());
-            }
+            g_hThread = CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)PyExecuteFileThread, fileBuffer, NULL, NULL);
         }
+        break;
+    }
+    case menu_entry::MENU_CANCEL_SCRIPT:
+        if (g_IsScriptRunning)
+        {
+            //TODO: Implement something here
+            g_IsScriptRunning = false;
+        }
+        else
+            MessageBoxA(g_hwndDlg, "No script is running", PLUGIN_NAME, MB_OK | MB_ICONEXCLAMATION);
         break;
     case menu_entry::MENU_ABOUT:
         MessageBoxA(g_hwndDlg,  PLUGIN_NAME" by Elvis\n"
@@ -45,18 +74,33 @@ void PluginHandleMenuCommand(CBTYPE cbType, PLUG_CB_MENUENTRY* info)
     }
 }
 
+void __stdcall PyCommandExecuteThread(char* cmd)
+{
+    g_IsScriptRunning = true;
+    try
+    {
+        py::exec(cmd);
+    }
+    catch (py::error_already_set& e)
+    {
+        _plugin_logprint(e.what());
+    }
+    g_IsScriptRunning = false;
+
+    //cmd is dynamic memory allocated by malloc
+    //Need to be free before exit thread
+    free(cmd);
+}
+
 bool PythonCommandExecute(const char* cmd)
 {
     if (cmd)
     {
-        try
-        {
-            py::exec(cmd);
-        }
-        catch (py::error_already_set& e)
-        {
-            _plugin_logprint(e.what());
-        }
+        size_t cmdLength = strlen(cmd);
+        char* newCmdBuffer = (char*)malloc(cmdLength + 1);
+        memset(newCmdBuffer, 0, cmdLength + 1);
+        strcpy_s(newCmdBuffer, cmdLength + 1, cmd);
+        g_hThread = CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)PyCommandExecuteThread, (LPVOID)newCmdBuffer, NULL, NULL);
         return true;
     }
     return false;
@@ -74,8 +118,8 @@ bool pluginInit(PLUG_INITSTRUCT* initStruct)
     info.completeCommand = nullptr;
     GuiRegisterScriptLanguage(&info);
 
-    //start the interpreter and keep it alive
-    pGuard = new py::scoped_interpreter{};
+    //start the interpreter
+    py::initialize_interpreter();
 
     //Redirect output to x64dbg log windows
     py::module::import("sys_pystream");
@@ -88,22 +132,20 @@ bool pluginInit(PLUG_INITSTRUCT* initStruct)
 //Deinitialize your plugin data here.
 void pluginStop()
 {
-    if (pGuard)
-    {
-        delete pGuard;
-        pGuard = nullptr;
-    }
+    py::finalize_interpreter();
 }
 
 //Do GUI/Menu related things here.
 void pluginSetup()
 {
     _plugin_menuaddentry(g_hMenu, menu_entry::MENU_RUN_SCRIPT, "&Run Script");
+    //_plugin_menuaddentry(g_hMenu, menu_entry::MENU_CANCEL_SCRIPT, "&Cancel Script");
     _plugin_menuaddseparator(g_hMenu);
     _plugin_menuaddentry(g_hMenu, menu_entry::MENU_ABOUT, "&About");
 
     //Set hotkey
     _plugin_menuentrysethotkey(g_pluginHandle, menu_entry::MENU_RUN_SCRIPT, "Alt+F7");
+    //_plugin_menuentrysethotkey(g_pluginHandle, menu_entry::MENU_CANCEL_SCRIPT, "Ctrl+Alt+F7");
 }
 
 bool OpenFileDialog(char* buffer, size_t bufferSize)
