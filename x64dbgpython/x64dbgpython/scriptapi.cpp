@@ -284,6 +284,47 @@ namespace PyWrapper
 		}
 	}
 
+	namespace Gui
+	{
+
+		std::vector<duint>* SelectionGet(Script::Gui::Window window)
+		{
+			std::vector<duint>* ret = nullptr;
+			duint start = 0;
+			duint end = 0;
+			if (Script::Gui::SelectionGet(window, &start, &end))
+			{
+				ret = new std::vector<duint>();
+				ret->push_back(start);
+				ret->push_back(end);
+			}
+			return ret;
+		}
+
+		std::string InputLine(const char* title)
+		{
+			char* text = new char[GUI_MAX_LINE_SIZE];
+			if (!text)
+				return "";
+
+			ZeroMemory(text, GUI_MAX_LINE_SIZE);
+
+			std::string s = "";
+			if (Script::Gui::InputLine(title, text))
+				std::string s = text;
+
+			delete[] text;
+			return s;
+		}
+
+		duint InputValue(const char* title)
+		{
+			duint value = 0;
+			Script::Gui::InputValue(title, &value);
+			return value;
+		}
+	}
+
 	namespace Label
 	{
 		struct pyLabelInfo
@@ -868,8 +909,8 @@ PYBIND11_EMBEDDED_MODULE(x64dbg, m)
 	mGui.def("SelectionGetEnd", &Gui::SelectionGetEnd);
 	mGui.def("Message", &Gui::Message);
 	mGui.def("MessageYesNo", &Gui::MessageYesNo);
-	mGui.def("InputLine", &Gui::InputLine);
-	mGui.def("InputValue", &Gui::InputValue);
+	mGui.def("InputLine", &PyWrapper::Gui::InputLine);
+	mGui.def("InputValue", &PyWrapper::Gui::InputValue);
 	mGui.def("Refresh", &Gui::Refresh);
 
 	py::module mDisassembly = mGui.def_submodule("Disassembly", "x64dbg Gui::Disassembly python script wrapper");

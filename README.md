@@ -45,6 +45,15 @@ x64dbg python made some wrapper for easy to use in python language. If you're go
 | `GetInfo(duint addr, FunctionInfo* info)`      | `pyFunctionInfo* GetInfo(duint addr)`       |
 | `bool GetList(ListOf(FunctionInfo) list)`      | `std::vector<pyFunctionInfo>* GetList()`    |
 
+**Gui**
+
+| Original                                       | Wrapper                                     |
+| ---------------------------------------------- | ------------------------------------------- |
+| `bool SelectionGet(Window window, duint* start, duint* end)` | `std::vector<duint>* SelectionGet(Window window)`
+| `bool InputLine(const char* title, char* text)`| `std::string InputLine(const char* title)`  |
+| `bool InputValue(const char* title, duint* value)` | `duint InputValue(const char* title)`   |
+
+
 **Label**
 
 | Original                                       | Wrapper                                     |
