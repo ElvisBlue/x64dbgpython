@@ -14,7 +14,6 @@ bool OpenFileDialog(char*, size_t);
 enum menu_entry
 {
     MENU_RUN_SCRIPT,
-    MENU_CANCEL_SCRIPT,
     MENU_ABOUT
 };
 
@@ -44,27 +43,21 @@ void PluginHandleMenuCommand(CBTYPE cbType, PLUG_CB_MENUENTRY* info)
     case menu_entry::MENU_RUN_SCRIPT:
     {
         char* fileBuffer = (char*)malloc(MAX_PATH);
-        memset(fileBuffer, 0, MAX_PATH);
-        if (g_IsScriptRunning)
+        if (fileBuffer)
         {
-            MessageBoxA(g_hwndDlg, "Another script is running", PLUGIN_NAME, MB_OK | MB_ICONEXCLAMATION);
-            break;
-        }
-        if (OpenFileDialog(fileBuffer, sizeof(fileBuffer)))
-        {
-            g_hThread = CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)PyExecuteFileThread, fileBuffer, NULL, NULL);
+            memset(fileBuffer, 0, MAX_PATH);
+            if (g_IsScriptRunning)
+            {
+                MessageBoxA(g_hwndDlg, "Another script is running", PLUGIN_NAME, MB_OK | MB_ICONEXCLAMATION);
+                break;
+            }
+            if (OpenFileDialog(fileBuffer, sizeof(fileBuffer)))
+            {
+                g_hThread = CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)PyExecuteFileThread, fileBuffer, NULL, NULL);
+            }
         }
         break;
     }
-    case menu_entry::MENU_CANCEL_SCRIPT:
-        if (g_IsScriptRunning)
-        {
-            //TODO: Implement something here
-            g_IsScriptRunning = false;
-        }
-        else
-            MessageBoxA(g_hwndDlg, "No script is running", PLUGIN_NAME, MB_OK | MB_ICONEXCLAMATION);
-        break;
     case menu_entry::MENU_ABOUT:
         MessageBoxA(g_hwndDlg,  PLUGIN_NAME" by Elvis\n"
                                 "Warning: This plugin contains a lot of bugs", PLUGIN_NAME, MB_ICONINFORMATION);
@@ -98,10 +91,15 @@ bool PythonCommandExecute(const char* cmd)
     {
         size_t cmdLength = strlen(cmd);
         char* newCmdBuffer = (char*)malloc(cmdLength + 1);
-        memset(newCmdBuffer, 0, cmdLength + 1);
-        strcpy_s(newCmdBuffer, cmdLength + 1, cmd);
-        g_hThread = CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)PyCommandExecuteThread, (LPVOID)newCmdBuffer, NULL, NULL);
-        return true;
+        if (newCmdBuffer)
+        {
+            memset(newCmdBuffer, 0, cmdLength + 1);
+            strcpy_s(newCmdBuffer, cmdLength + 1, cmd);
+            g_hThread = CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)PyCommandExecuteThread, (LPVOID)newCmdBuffer, NULL, NULL);
+            return true;
+        }
+        else
+            return true;
     }
     return false;
 }
@@ -139,13 +137,11 @@ void pluginStop()
 void pluginSetup()
 {
     _plugin_menuaddentry(g_hMenu, menu_entry::MENU_RUN_SCRIPT, "&Run Script");
-    //_plugin_menuaddentry(g_hMenu, menu_entry::MENU_CANCEL_SCRIPT, "&Cancel Script");
     _plugin_menuaddseparator(g_hMenu);
     _plugin_menuaddentry(g_hMenu, menu_entry::MENU_ABOUT, "&About");
 
     //Set hotkey
     _plugin_menuentrysethotkey(g_pluginHandle, menu_entry::MENU_RUN_SCRIPT, "Alt+F7");
-    //_plugin_menuentrysethotkey(g_pluginHandle, menu_entry::MENU_CANCEL_SCRIPT, "Ctrl+Alt+F7");
 }
 
 bool OpenFileDialog(char* buffer, size_t bufferSize)
