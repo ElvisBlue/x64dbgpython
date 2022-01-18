@@ -28,6 +28,7 @@ void __stdcall PyExecuteFileThread(char* fileBuffer)
     catch (py::error_already_set& e)
     {
         _plugin_logprint(e.what());
+        _plugin_logprint("Errrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
     }
     g_IsScriptRunning = false;
 

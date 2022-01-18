@@ -309,9 +309,9 @@ namespace PyWrapper
 
 			ZeroMemory(text, GUI_MAX_LINE_SIZE);
 
-			std::string s = "";
-			if (Script::Gui::InputLine(title, text))
-				std::string s = text;
+			std::string s;
+			Script::Gui::InputLine(title, text);
+			s = text;
 
 			delete[] text;
 			return s;
