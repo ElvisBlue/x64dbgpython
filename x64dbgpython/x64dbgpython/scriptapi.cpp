@@ -320,8 +320,10 @@ namespace PyWrapper
 		duint InputValue(const char* title)
 		{
 			duint value = 0;
-			Script::Gui::InputValue(title, &value);
-			return value;
+			if (Script::Gui::InputValue(title, &value))
+				return value;
+			else
+				return 0;
 		}
 	}
 

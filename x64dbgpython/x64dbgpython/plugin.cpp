@@ -28,7 +28,8 @@ void __stdcall PyExecuteFileThread(char* fileBuffer)
     catch (py::error_already_set& e)
     {
         _plugin_logprint(e.what());
-        _plugin_logprint("Errrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+        g_IsScriptRunning = false;
+        free(fileBuffer);
     }
     g_IsScriptRunning = false;
 
@@ -78,6 +79,8 @@ void __stdcall PyCommandExecuteThread(char* cmd)
     catch (py::error_already_set& e)
     {
         _plugin_logprint(e.what());
+        g_IsScriptRunning = false;
+        free(cmd);
     }
     g_IsScriptRunning = false;
 
