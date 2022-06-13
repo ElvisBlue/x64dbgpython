@@ -286,6 +286,57 @@ namespace PyWrapper
 
 	namespace Gui
 	{
+		
+		namespace Disassembly
+		{
+			std::vector<duint>* SelectionGet()
+			{
+				std::vector<duint>* ret = nullptr;
+				duint start = 0;
+				duint end = 0;
+				if (Script::Gui::Disassembly::SelectionGet(&start, &end))
+				{
+					ret = new std::vector<duint>();
+					ret->push_back(start);
+					ret->push_back(end);
+				}
+				return ret;
+			}
+		}
+
+		namespace Dump
+		{
+			std::vector<duint>* SelectionGet()
+			{
+				std::vector<duint>* ret = nullptr;
+				duint start = 0;
+				duint end = 0;
+				if (Script::Gui::Dump::SelectionGet(&start, &end))
+				{
+					ret = new std::vector<duint>();
+					ret->push_back(start);
+					ret->push_back(end);
+				}
+				return ret;
+			}
+		}
+
+		namespace Stack
+		{
+			std::vector<duint>* SelectionGet()
+			{
+				std::vector<duint>* ret = nullptr;
+				duint start = 0;
+				duint end = 0;
+				if (Script::Gui::Stack::SelectionGet(&start, &end))
+				{
+					ret = new std::vector<duint>();
+					ret->push_back(start);
+					ret->push_back(end);
+				}
+				return ret;
+			}
+		}
 
 		std::vector<duint>* SelectionGet(Script::Gui::Window window)
 		{
@@ -300,6 +351,7 @@ namespace PyWrapper
 			}
 			return ret;
 		}
+		
 
 		std::string InputLine(const char* title)
 		{
@@ -902,10 +954,10 @@ PYBIND11_EMBEDDED_MODULE(x64dbg, m)
 		.value("StackWindow", Gui::Window::StackWindow)
 		.value("GraphWindow", Gui::Window::GraphWindow)
 		.value("MemMapWindow", Gui::Window::MemMapWindow)
-		.value("SymModWindow", Gui::Window::MemMapWindow);
+		.value("SymModWindow", Gui::Window::SymModWindow);
 
 	//We ignore 3 function AddQWidgetTab, ShowQWidgetTab and CloseQWidgetTab
-	mGui.def("SelectionGet", &Gui::SelectionGet);
+	mGui.def("SelectionGet", &PyWrapper::Gui::SelectionGet);
 	mGui.def("SelectionSet", &Gui::SelectionSet);
 	mGui.def("SelectionGetStart", &Gui::SelectionGetStart);
 	mGui.def("SelectionGetEnd", &Gui::SelectionGetEnd);
@@ -916,19 +968,19 @@ PYBIND11_EMBEDDED_MODULE(x64dbg, m)
 	mGui.def("Refresh", &Gui::Refresh);
 
 	py::module mDisassembly = mGui.def_submodule("Disassembly", "x64dbg Gui::Disassembly python script wrapper");
-	mDisassembly.def("SelectionGet", &Gui::Disassembly::SelectionGet);
+	mDisassembly.def("SelectionGet", &PyWrapper::Gui::Disassembly::SelectionGet);
 	mDisassembly.def("SelectionSet", &Gui::Disassembly::SelectionSet);
 	mDisassembly.def("SelectionGetStart", &Gui::Disassembly::SelectionGetStart);
 	mDisassembly.def("SelectionGetEnd", &Gui::Disassembly::SelectionGetEnd);
 
 	py::module mDump = mGui.def_submodule("Dump", "x64dbg Gui::Dump python script wrapper");
-	mDump.def("SelectionGet", &Gui::Dump::SelectionGet);
+	mDump.def("SelectionGet", &PyWrapper::Gui::Dump::SelectionGet);
 	mDump.def("SelectionSet", &Gui::Dump::SelectionSet);
 	mDump.def("SelectionGetStart", &Gui::Dump::SelectionGetStart);
 	mDump.def("SelectionGetEnd", &Gui::Dump::SelectionGetEnd);
 
 	py::module mGuiStack = mGui.def_submodule("Stack", "x64dbg Gui::Stack python script wrapper");
-	mGuiStack.def("SelectionGet", &Gui::Stack::SelectionGet);
+	mGuiStack.def("SelectionGet", &PyWrapper::Gui::Stack::SelectionGet);
 	mGuiStack.def("SelectionSet", &Gui::Stack::SelectionSet);
 	mGuiStack.def("SelectionGetStart", &Gui::Stack::SelectionGetStart);
 	mGuiStack.def("SelectionGetEnd", &Gui::Stack::SelectionGetEnd);

@@ -55,7 +55,10 @@ x64dbg python made some wrapper for easy to use in python language. If you're go
 
 | Original                                       | Wrapper                                     |
 | ---------------------------------------------- | ------------------------------------------- |
-| `bool SelectionGet(Window window, duint* start, duint* end)` | `std::vector<duint>* SelectionGet(Window window)`
+| `bool SelectionGet(Window window, duint* start, duint* end)` | `std::vector<duint>* SelectionGet(Window window)`|
+| `bool Gui::Disassembly::SelectionGet(duint* start, duint* end)` | `std::vector<duint>* PyWrapper::Gui::Disassembly::SelectionGet()`|
+| `bool Gui::Dump::SelectionGet(duint* start, duint* end)` | `std::vector<duint>* PyWrapper::Gui::Dump::SelectionGet()`|
+| `bool Gui::Stack::SelectionGet(duint* start, duint* end)` | `std::vector<duint>* PyWrapper::Gui::Stack::SelectionGet()`|
 | `bool InputLine(const char* title, char* text)`| `std::string InputLine(const char* title)`  |
 | `bool InputValue(const char* title, duint* value)` | `duint InputValue(const char* title)`   |
 
