@@ -71,6 +71,15 @@ x64dbg python made some wrapper for easy to use in python language. If you're go
 | `bool GetInfo(duint addr, LabelInfo* info)`    | `pyLabelInfo* GetInfo(duint addr)`          |
 | `bool GetList(ListOf(LabelInfo) list)`         | `std::vector<pyLabelInfo>* GetList()`       |
 
+
+**Memory**
+
+| Original                                                                     | Wrapper                                     |
+| ---------------------------------------------------------------------------- | ------------------------------------------- |
+| `bool Read(duint addr, void* data, duint size, duint* sizeRead);`            | `py::bytes Read(duint addr, duint size)`    |
+| `bool Write(duint addr, const void* data, duint size, duint* sizeWritten)`   | `duint Write(duint addr, std::string data)` |
+
+
 **Module**
 
 | Original                                                | Wrapper                                        |
