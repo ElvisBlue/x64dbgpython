@@ -437,6 +437,38 @@ namespace PyWrapper
 		}
 	}
 
+	namespace Memory
+	{
+		py::bytes Read(duint addr, duint size)
+		{
+			unsigned char* readData = (unsigned char*)malloc(size);
+			if (readData == nullptr)
+				return nullptr;
+
+			memset(readData, 0, size);
+			duint sizeRead = 0;
+			py::bytes ret;
+			if (Script::Memory::Read(addr, readData, size, &sizeRead))
+				ret = py::bytes((char*)readData, sizeRead);
+			else
+				ret = nullptr;
+			
+			free(readData);
+			return ret;
+		}
+
+		duint Write(duint addr, std::string data)
+		{
+			duint sizeWritten = 0;
+			if (Script::Memory::Write(addr, data.c_str(), data.size(), &sizeWritten))
+			{
+				return sizeWritten;
+			}
+			else
+				return 0;
+		}
+	}
+
 	namespace Module
 	{
 		struct pyModuleInfo
@@ -1017,8 +1049,8 @@ PYBIND11_EMBEDDED_MODULE(x64dbg, m)
 	//Implement module Memory
 	py::module mMemory = m.def_submodule("Memory", "x64dbg Memory python script wrapper");
 
-	mMemory.def("Read", &Memory::Read);
-	mMemory.def("Write", &Memory::Write);
+	mMemory.def("Read", &PyWrapper::Memory::Read);
+	mMemory.def("Write", &PyWrapper::Memory::Write);
 	mMemory.def("IsValidPtr", &Memory::IsValidPtr);
 	mMemory.def("RemoteAlloc", &Memory::RemoteAlloc);
 	mMemory.def("RemoteFree", &Memory::RemoteFree);
