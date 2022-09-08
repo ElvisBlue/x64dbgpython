@@ -119,7 +119,7 @@ namespace PyWrapper
 				return true;
 			else
 			{
-				_plugin_logprintf("AssembleEx error: %s\n", retError);
+				_plugin_logprintf("AssembleMemEx error: %s\n", retError);
 				return false;
 			}
 		}

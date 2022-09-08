@@ -112,3 +112,7 @@ x64dbg python made some wrapper for easy to use in python language. If you're go
  - [pybind11](https://github.com/pybind/pybind11)
  - [VC-LTL](https://github.com/Chuyu-Team/VC-LTL)
  - [x64dbg](https://github.com/x64dbg/x64dbg)
+ 
+# Donation
+
+Please consider donating to [x64dbg](https://github.com/x64dbg/x64dbg)
