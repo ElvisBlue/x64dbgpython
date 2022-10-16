@@ -2,14 +2,16 @@
 #include "pybind11\embed.h"
 #include "pybind11\iostream.h"
 #include "pystream.h"
+#include "icon.h"
 
 namespace py = pybind11;
 CPystream pPystream;
 bool g_IsScriptRunning = false;
 HANDLE g_hThread = NULL;
+const ICONDATA g_icon = {mainICO, sizeof(mainICO)};
 
-//Function define
 bool OpenFileDialog(char*, size_t);
+bool LoadGlobalIcon();
 
 enum menu_entry
 {
@@ -62,7 +64,7 @@ void PluginHandleMenuCommand(CBTYPE cbType, PLUG_CB_MENUENTRY* info)
     }
     case menu_entry::MENU_ABOUT:
         MessageBoxA(g_hwndDlg,  PLUGIN_NAME" by Elvis\n"
-                                "Warning: This plugin contains a lot of bugs", PLUGIN_NAME, MB_ICONINFORMATION);
+                                "Note: If you find a bug, please report it to github.", PLUGIN_NAME, MB_ICONINFORMATION);
         break;
     default:
         break;
@@ -140,6 +142,7 @@ void pluginStop()
 //Do GUI/Menu related things here.
 void pluginSetup()
 {
+    _plugin_menuseticon(g_hMenu, &g_icon);
     _plugin_menuaddentry(g_hMenu, menu_entry::MENU_RUN_SCRIPT, "&Run Script");
     _plugin_menuaddseparator(g_hMenu);
     _plugin_menuaddentry(g_hMenu, menu_entry::MENU_ABOUT, "&About");
@@ -165,6 +168,11 @@ bool OpenFileDialog(char* buffer, size_t bufferSize)
     sOpenFileName.lpstrInitialDir = NULL;
     sOpenFileName.hwndOwner = g_hwndDlg;
     return (FALSE != GetOpenFileNameA(&sOpenFileName));
+}
+
+bool LoadGlobalIcon()
+{
+    //HANDLE hResource = FindResource(g_h)
 }
 
 PYBIND11_EMBEDDED_MODULE(sys_pystream, module)

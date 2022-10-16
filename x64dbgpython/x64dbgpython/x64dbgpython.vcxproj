@@ -32,6 +32,7 @@
     <ClCompile Include="scriptapi.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="icon.h" />
     <ClInclude Include="plugin.h" />
     <ClInclude Include="pluginmain.h" />
     <ClInclude Include="pluginsdk\bridgegraph.h" />
@@ -77,12 +78,16 @@
     <ClInclude Include="pybind11\stl.h" />
     <ClInclude Include="pybind11\stl_bind.h" />
     <ClInclude Include="pystream.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="pluginsdk\x32bridge.lib" />
     <Library Include="pluginsdk\x32dbg.lib" />
     <Library Include="pluginsdk\x64bridge.lib" />
     <Library Include="pluginsdk\x64dbg.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resource\python_104451.ico" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

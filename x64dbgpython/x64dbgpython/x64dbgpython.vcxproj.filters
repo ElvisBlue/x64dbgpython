@@ -167,6 +167,12 @@
     <ClInclude Include="pystream.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="icon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="pluginsdk\x32bridge.lib">
@@ -181,5 +187,10 @@
     <Library Include="pluginsdk\x64dbg.lib">
       <Filter>pluginsdk</Filter>
     </Library>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resource\python_104451.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
