@@ -356,8 +356,6 @@ namespace PyWrapper
 		std::string InputLine(const char* title)
 		{
 			char* text = new char[GUI_MAX_LINE_SIZE];
-			if (!text)
-				return "";
 
 			ZeroMemory(text, GUI_MAX_LINE_SIZE);
 

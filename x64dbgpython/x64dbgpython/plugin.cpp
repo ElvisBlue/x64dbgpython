@@ -7,21 +7,37 @@
 namespace py = pybind11;
 CPystream pPystream;
 bool g_IsScriptRunning = false;
+bool g_Interupt = false;
 HANDLE g_hThread = NULL;
 const ICONDATA g_icon = {mainICO, sizeof(mainICO)};
 
 bool OpenFileDialog(char*, size_t);
-bool LoadGlobalIcon();
 
 enum menu_entry
 {
     MENU_RUN_SCRIPT,
+    MENU_STOP_SCRIPT,
     MENU_ABOUT
 };
+
+int InteruptCheck(PyObject* obj, _frame* frame, int what, PyObject* arg)
+{
+    if (g_Interupt)
+    {
+        PyErr_SetString(PyExc_KeyboardInterrupt, "Script cancel by user");
+        g_Interupt = false;
+    }
+
+    return 0;
+}
 
 void __stdcall PyExecuteFileThread(char* fileBuffer)
 {
     g_IsScriptRunning = true;
+
+    //Setup hook function to check break
+    PyEval_SetTrace(InteruptCheck, NULL);
+
     try
     {
         py::object scope = py::module_::import("__main__").attr("__dict__");
@@ -30,14 +46,23 @@ void __stdcall PyExecuteFileThread(char* fileBuffer)
     catch (py::error_already_set& e)
     {
         _plugin_logprint(e.what());
+
+        //Set some stuff and free after execution
         g_IsScriptRunning = false;
         free(fileBuffer);
+        PyEval_SetTrace(NULL, NULL);
+        return;
     }
+
     g_IsScriptRunning = false;
 
     //fileBuffer is dynamic memory allocated by malloc
     //Need to be free before exit thread
     free(fileBuffer);
+
+    //Remove the trace hook
+    PyEval_SetTrace(NULL, NULL);
+    return;
 }
 
 void PluginHandleMenuCommand(CBTYPE cbType, PLUG_CB_MENUENTRY* info)
@@ -46,15 +71,16 @@ void PluginHandleMenuCommand(CBTYPE cbType, PLUG_CB_MENUENTRY* info)
     {
     case menu_entry::MENU_RUN_SCRIPT:
     {
+        if (g_IsScriptRunning)
+        {
+            MessageBoxA(g_hwndDlg, "A script is running", "Warning", MB_OK | MB_ICONEXCLAMATION);
+            break;
+        }
+
         char* fileBuffer = (char*)malloc(MAX_PATH);
         if (fileBuffer)
         {
             memset(fileBuffer, 0, MAX_PATH);
-            if (g_IsScriptRunning)
-            {
-                MessageBoxA(g_hwndDlg, "Another script is running", PLUGIN_NAME, MB_OK | MB_ICONEXCLAMATION);
-                break;
-            }
             if (OpenFileDialog(fileBuffer, sizeof(fileBuffer)))
             {
                 g_hThread = CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)PyExecuteFileThread, fileBuffer, NULL, NULL);
@@ -62,10 +88,17 @@ void PluginHandleMenuCommand(CBTYPE cbType, PLUG_CB_MENUENTRY* info)
         }
         break;
     }
-    case menu_entry::MENU_ABOUT:
-        MessageBoxA(g_hwndDlg,  PLUGIN_NAME" by Elvis\n"
-                                "Note: If you find a bug, please report it to github.", PLUGIN_NAME, MB_ICONINFORMATION);
+    case menu_entry::MENU_STOP_SCRIPT:
+    {
+        g_Interupt = true;
         break;
+    }
+    case menu_entry::MENU_ABOUT:
+    {
+        MessageBoxA(g_hwndDlg, PLUGIN_NAME" by Elvis\n"
+            "Note: If you find a bug, please report it to github.", PLUGIN_NAME, MB_ICONINFORMATION);
+        break;
+    }
     default:
         break;
     }
@@ -144,6 +177,7 @@ void pluginSetup()
 {
     _plugin_menuseticon(g_hMenu, &g_icon);
     _plugin_menuaddentry(g_hMenu, menu_entry::MENU_RUN_SCRIPT, "&Run Script");
+    _plugin_menuaddentry(g_hMenu, menu_entry::MENU_STOP_SCRIPT, "&Stop Script");
     _plugin_menuaddseparator(g_hMenu);
     _plugin_menuaddentry(g_hMenu, menu_entry::MENU_ABOUT, "&About");
 
@@ -168,11 +202,6 @@ bool OpenFileDialog(char* buffer, size_t bufferSize)
     sOpenFileName.lpstrInitialDir = NULL;
     sOpenFileName.hwndOwner = g_hwndDlg;
     return (FALSE != GetOpenFileNameA(&sOpenFileName));
-}
-
-bool LoadGlobalIcon()
-{
-    //HANDLE hResource = FindResource(g_h)
 }
 
 PYBIND11_EMBEDDED_MODULE(sys_pystream, module)
