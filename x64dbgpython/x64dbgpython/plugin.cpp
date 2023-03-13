@@ -90,7 +90,9 @@ void PluginHandleMenuCommand(CBTYPE cbType, PLUG_CB_MENUENTRY* info)
     }
     case menu_entry::MENU_STOP_SCRIPT:
     {
-        g_Interupt = true;
+        if ((g_IsScriptRunning) && (!g_Interupt))
+            g_Interupt = true;
+
         break;
     }
     case menu_entry::MENU_ABOUT:
