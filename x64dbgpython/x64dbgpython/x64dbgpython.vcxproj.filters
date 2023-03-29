@@ -173,9 +173,6 @@
     <ClInclude Include="pystream.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="icon.h">
       <Filter>Header Files</Filter>
     </ClInclude>

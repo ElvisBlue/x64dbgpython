@@ -127,6 +127,7 @@ void __stdcall PyCommandExecuteThread(char* cmd)
         _plugin_logprint(e.what());
         g_IsScriptRunning = false;
         free(cmd);
+        return;
     }
     g_IsScriptRunning = false;
 

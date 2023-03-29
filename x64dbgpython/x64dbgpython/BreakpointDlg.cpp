@@ -1,4 +1,4 @@
-#include "resource.h"
+#include "resource1.h"
 #include "BreakpointDlg.h"
 #include "plugin.h"
 
@@ -17,6 +17,11 @@ INT_PTR CALLBACK BreakpointDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 	case WM_CLOSE:
 	{
 		EndDialog(hwndDlg, 0);
+		break;
+	}
+	case WM_INITDIALOG:
+	{
+		break;
 	}
 	default:
 		break;
