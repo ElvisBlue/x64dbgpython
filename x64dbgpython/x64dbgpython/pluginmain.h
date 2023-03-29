@@ -69,3 +69,4 @@ extern int g_hMenu;
 extern int g_hMenuDisasm;
 extern int g_hMenuDump;
 extern int g_hMenuStack;
+extern HINSTANCE g_dllInstance;

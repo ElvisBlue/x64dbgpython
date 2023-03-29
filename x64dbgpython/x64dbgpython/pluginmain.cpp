@@ -7,10 +7,16 @@ int g_hMenu;
 int g_hMenuDisasm;
 int g_hMenuDump;
 int g_hMenuStack;
+HINSTANCE g_dllInstance;
 
 PLUG_EXPORT void CBMENUENTRY(CBTYPE cbType, PLUG_CB_MENUENTRY* info)
 {
     PluginHandleMenuCommand(cbType, info);
+}
+
+PLUG_EXPORT void CBBREAKPOINT(CBTYPE cbType, PLUG_CB_BREAKPOINT* info)
+{
+    PluginHandleBreakpoint(cbType, info);
 }
 
 PLUG_EXPORT bool pluginit(PLUG_INITSTRUCT* initStruct)
@@ -36,4 +42,11 @@ PLUG_EXPORT void plugsetup(PLUG_SETUPSTRUCT* setupStruct)
     g_hMenuDump = setupStruct->hMenuDump;
     g_hMenuStack = setupStruct->hMenuStack;
     pluginSetup();
+}
+
+
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
+{
+    g_dllInstance = hinstDLL;
+    return TRUE;
 }

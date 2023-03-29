@@ -3,6 +3,8 @@
 #include "pybind11\iostream.h"
 #include "pystream.h"
 #include "icon.h"
+#include "BreakpointDlg.h"
+#include "resource1.h"
 
 namespace py = pybind11;
 CPystream pPystream;
@@ -17,6 +19,7 @@ enum menu_entry
 {
     MENU_RUN_SCRIPT,
     MENU_STOP_SCRIPT,
+    MENU_BREAKPOINTDLG,
     MENU_ABOUT
 };
 
@@ -95,10 +98,16 @@ void PluginHandleMenuCommand(CBTYPE cbType, PLUG_CB_MENUENTRY* info)
 
         break;
     }
+    case menu_entry::MENU_BREAKPOINTDLG:
+    {
+        DialogBoxParamA(g_dllInstance, MAKEINTRESOURCEA(IDD_BREAKPOINTDLG), g_hwndDlg, BreakpointDlgProc, NULL);
+        break;
+    }
     case menu_entry::MENU_ABOUT:
     {
         MessageBoxA(g_hwndDlg, PLUGIN_NAME" by Elvis\n"
-            "Note: If you find a bug, please report it to github.", PLUGIN_NAME, MB_ICONINFORMATION);
+            "Note: If you find a bug, please report it to github.\n"
+            "https://github.com/ElvisBlue/x64dbgpython", PLUGIN_NAME, MB_ICONINFORMATION);
         break;
     }
     default:
@@ -145,6 +154,7 @@ bool PythonCommandExecute(const char* cmd)
     return false;
 }
 
+
 //Initialize your plugin data here.
 bool pluginInit(PLUG_INITSTRUCT* initStruct)
 {
@@ -165,6 +175,9 @@ bool pluginInit(PLUG_INITSTRUCT* initStruct)
     py::module::import("sys").attr("stdout") = pPystream;
     py::module::import("sys").attr("stderr") = pPystream;
 
+    //Import x64dbg module by default
+    py::exec("from x64dbg import *");
+
     return true;
 }
 
@@ -180,6 +193,7 @@ void pluginSetup()
     _plugin_menuseticon(g_hMenu, &g_icon);
     _plugin_menuaddentry(g_hMenu, menu_entry::MENU_RUN_SCRIPT, "&Run Script");
     _plugin_menuaddentry(g_hMenu, menu_entry::MENU_STOP_SCRIPT, "&Stop Script");
+    _plugin_menuaddentry(g_hMenu, menu_entry::MENU_BREAKPOINTDLG, "&Conditional Breakpoint");
     _plugin_menuaddseparator(g_hMenu);
     _plugin_menuaddentry(g_hMenu, menu_entry::MENU_ABOUT, "&About");
 

@@ -27,11 +27,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BreakpointDlg.cpp" />
+    <ClCompile Include="CBreakpoints.cpp" />
     <ClCompile Include="plugin.cpp" />
     <ClCompile Include="pluginmain.cpp" />
     <ClCompile Include="scriptapi.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BreakpointDlg.h" />
+    <ClInclude Include="CBreakpoints.h" />
     <ClInclude Include="icon.h" />
     <ClInclude Include="plugin.h" />
     <ClInclude Include="pluginmain.h" />
@@ -79,6 +83,7 @@
     <ClInclude Include="pybind11\stl_bind.h" />
     <ClInclude Include="pystream.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="resource1.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="pluginsdk\x32bridge.lib" />
@@ -88,6 +93,9 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="resource\python_104451.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="x64dbgpython.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
