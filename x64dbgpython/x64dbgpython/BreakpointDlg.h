@@ -1,6 +1,5 @@
 #pragma once
 #include <Windows.h>
-#include <vector>
 #include "pluginmain.h"
 #include "CBreakpoints.h"
 

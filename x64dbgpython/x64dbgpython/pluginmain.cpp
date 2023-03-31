@@ -44,9 +44,9 @@ PLUG_EXPORT void plugsetup(PLUG_SETUPSTRUCT* setupStruct)
     pluginSetup();
 }
 
-
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 {
-    g_dllInstance = hinstDLL;
+    if (fdwReason == DLL_PROCESS_ATTACH)
+        g_dllInstance = hinstDLL;
     return TRUE;
 }
