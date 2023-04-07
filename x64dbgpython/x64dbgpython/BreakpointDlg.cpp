@@ -9,6 +9,9 @@ namespace py = pybind11;
 
 std::map<duint, std::string> g_BreakpointList;
 
+void RefreshBpListBox(HWND hwnd);
+void CleanGarbageForBpMap();
+
 duint GetBpAtIndex(int index)
 {
 	BPMAP bpList;
@@ -45,20 +48,8 @@ INT_PTR CALLBACK BreakpointDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 		}
 		case WM_INITDIALOG:
 		{
-			HWND bpListHwnd = GetDlgItem(hwndDlg, IDC_BPLIST);
-			BPMAP bpList;
-			DbgGetBpList(bp_none, &bpList);
-
-			for (int i = 0; i < bpList.count; i++)
-			{
-				wchar_t bpAddrText[20];
-
-				if (g_BreakpointList.find(bpList.bp[i].addr) != g_BreakpointList.end())
-					swprintf(bpAddrText, sizeof(bpAddrText) / 2, L"%p*", (void*)bpList.bp[i].addr);
-				else
-					swprintf(bpAddrText, sizeof(bpAddrText) / 2, L"%p", (void*)bpList.bp[i].addr);
-				SendMessage(bpListHwnd, LB_ADDSTRING, NULL, (LPARAM)bpAddrText);
-			}
+			CleanGarbageForBpMap();
+			RefreshBpListBox(hwndDlg);
 			break;
 		}
 		case WM_COMMAND:
@@ -105,6 +96,8 @@ INT_PTR CALLBACK BreakpointDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 					if (pos != -1)
 					{
 						DialogBoxParam(g_dllInstance, MAKEINTRESOURCE(IDD_SCRIPTEDITOR), hwndDlg, ScriptEditorProc, (LPARAM)pos);
+						RefreshBpListBox(hwndDlg);
+						
 						duint bpAddr = GetBpAtIndex(pos);
 						std::map<duint, std::string>::const_iterator iter = g_BreakpointList.find(bpAddr);
 						if (iter != g_BreakpointList.end())
@@ -181,4 +174,46 @@ INT_PTR CALLBACK ScriptEditorProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 	}
 
 	return false;
+}
+
+void RefreshBpListBox(HWND hwnd)
+{
+	HWND bpListHwnd = GetDlgItem(hwnd, IDC_BPLIST);
+	SendMessage(bpListHwnd, LB_RESETCONTENT, NULL, NULL);
+	BPMAP bpList;
+	DbgGetBpList(bp_none, &bpList);
+
+	for (int i = 0; i < bpList.count; i++)
+	{
+		wchar_t bpAddrText[20];
+
+		if (g_BreakpointList.find(bpList.bp[i].addr) != g_BreakpointList.end())
+			swprintf(bpAddrText, sizeof(bpAddrText) / 2, L"%p*", (void*)bpList.bp[i].addr);
+		else
+			swprintf(bpAddrText, sizeof(bpAddrText) / 2, L"%p", (void*)bpList.bp[i].addr);
+		SendMessage(bpListHwnd, LB_ADDSTRING, NULL, (LPARAM)bpAddrText);
+	}
+}
+
+void CleanGarbageForBpMap()
+{
+	BPMAP bpList;
+	DbgGetBpList(bp_none, &bpList);
+
+	for (auto it = g_BreakpointList.cbegin(); it != g_BreakpointList.end();)
+	{
+		bool isHaveInBpList = false;
+		for (int i = 0; i < bpList.count; i++)
+		{
+			if (bpList.bp[i].addr == it->first)
+			{
+				isHaveInBpList = true;
+				break;
+			}
+		}
+		if (isHaveInBpList)
+			it = g_BreakpointList.erase(it);
+		else
+			it++;
+	}
 }
