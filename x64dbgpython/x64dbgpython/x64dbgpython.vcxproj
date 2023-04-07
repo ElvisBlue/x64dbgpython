@@ -28,14 +28,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BreakpointDlg.cpp" />
-    <ClCompile Include="CBreakpoints.cpp" />
     <ClCompile Include="plugin.cpp" />
     <ClCompile Include="pluginmain.cpp" />
     <ClCompile Include="scriptapi.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BreakpointDlg.h" />
-    <ClInclude Include="CBreakpoints.h" />
     <ClInclude Include="icon.h" />
     <ClInclude Include="plugin.h" />
     <ClInclude Include="pluginmain.h" />

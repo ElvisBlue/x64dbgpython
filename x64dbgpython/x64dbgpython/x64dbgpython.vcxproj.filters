@@ -30,9 +30,6 @@
     <ClCompile Include="scriptapi.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CBreakpoints.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="BreakpointDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -174,9 +171,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="icon.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CBreakpoints.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource1.h">
