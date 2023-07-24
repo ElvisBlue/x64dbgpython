@@ -159,7 +159,6 @@ bool PythonCommandExecute(const char* cmd)
 //Initialize your plugin data here.
 bool pluginInit(PLUG_INITSTRUCT* initStruct)
 {
-
     //Register python script language
     SCRIPTTYPEINFO info;
     strcpy_s(info.name, "Python3");
@@ -194,7 +193,7 @@ void pluginSetup()
     _plugin_menuseticon(g_hMenu, &g_icon);
     _plugin_menuaddentry(g_hMenu, menu_entry::MENU_RUN_SCRIPT, "&Run Script");
     _plugin_menuaddentry(g_hMenu, menu_entry::MENU_STOP_SCRIPT, "&Stop Script");
-    _plugin_menuaddentry(g_hMenu, menu_entry::MENU_BREAKPOINTDLG, "&Conditional Breakpoint");
+    _plugin_menuaddentry(g_hMenu, menu_entry::MENU_BREAKPOINTDLG, "&Breakpoint Command");
     _plugin_menuaddseparator(g_hMenu);
     _plugin_menuaddentry(g_hMenu, menu_entry::MENU_ABOUT, "&About");
 
