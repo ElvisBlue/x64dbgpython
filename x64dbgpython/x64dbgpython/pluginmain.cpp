@@ -19,6 +19,16 @@ PLUG_EXPORT void CBBREAKPOINT(CBTYPE cbType, PLUG_CB_BREAKPOINT* info)
     PluginHandleBreakpoint(cbType, info);
 }
 
+PLUG_EXPORT void CBLOADDB(CBTYPE cbType, PLUG_CB_LOADSAVEDB* info)
+{
+    PluginHandleLoadDB(cbType, info);
+}
+
+PLUG_EXPORT void CBSAVEDB(CBTYPE cbType, PLUG_CB_LOADSAVEDB* info)
+{
+    PluginHandleSaveDB(cbType, info);
+}
+
 PLUG_EXPORT bool pluginit(PLUG_INITSTRUCT* initStruct)
 {
     initStruct->pluginVersion = PLUGIN_VERSION;

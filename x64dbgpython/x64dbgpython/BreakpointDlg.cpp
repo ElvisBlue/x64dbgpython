@@ -12,13 +12,6 @@ std::map<duint, std::string> g_BreakpointList;
 void RefreshBpListBox(HWND hwnd);
 void CleanGarbageForBpMap();
 
-duint GetBpAtIndex(int index)
-{
-	BPMAP bpList;
-	DbgGetBpList(bp_none, &bpList);
-	return bpList.bp[index].addr;
-}
-
 //Plugin breakpoint callback handle
 void PluginHandleBreakpoint(CBTYPE cbType, PLUG_CB_BREAKPOINT* info)
 {
@@ -35,6 +28,60 @@ void PluginHandleBreakpoint(CBTYPE cbType, PLUG_CB_BREAKPOINT* info)
 			_plugin_logprint(e.what());
 		}
 	}
+}
+
+//Plugin handle save data
+void PluginHandleSaveDB(CBTYPE cbType, PLUG_CB_LOADSAVEDB* info)
+{
+	json_t* jsonBPList = nullptr;
+	if (!g_BreakpointList.empty())
+	{
+		jsonBPList = json_array();
+		for (auto it = g_BreakpointList.cbegin(); it != g_BreakpointList.end(); it++)
+		{
+			json_t* jsonBP = json_object();
+			json_object_set_new(jsonBP, "addr", json_integer(it->first));
+			json_object_set_new(jsonBP, "command", json_string(it->second.c_str()));
+			json_array_append_new(jsonBPList, jsonBP);
+		}
+		json_object_set_new(info->root, "bpList", jsonBPList);
+		_plugin_logprint(json_dumps(jsonBPList, 0));
+	}
+}
+
+void PluginHandleLoadDB(CBTYPE cbType, PLUG_CB_LOADSAVEDB* info)
+{
+	if (!(info->loadSaveType == PLUG_DB_LOADSAVE_DATA || info->loadSaveType == PLUG_DB_LOADSAVE_ALL))
+		return;
+	
+	json_t* jsonBPList = json_object_get(info->root, "bpList");
+	if (!json_is_array(jsonBPList))
+		return;
+
+	json_t* jsonBP;
+	size_t i;
+
+	_plugin_logprint(json_dumps(jsonBPList, 0));
+
+	json_array_foreach(jsonBPList, i, jsonBP)
+	{
+		if (json_is_object(jsonBP))
+		{
+			json_t* jsonAddr = json_object_get(jsonBP, "addr");
+			json_t* jsonCommand = json_object_get(jsonBP, "command");
+			if (json_is_integer(jsonAddr) && json_is_string(jsonCommand))
+			{
+				g_BreakpointList.insert({ json_integer_value(jsonAddr), std::string(json_string_value(jsonCommand)) });
+			}
+		}
+	}
+}
+
+duint GetBpAtIndex(int index)
+{
+	BPMAP bpList;
+	DbgGetBpList(bp_none, &bpList);
+	return bpList.bp[index].addr;
 }
 
 INT_PTR CALLBACK BreakpointDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -211,7 +258,7 @@ void CleanGarbageForBpMap()
 				break;
 			}
 		}
-		if (isHaveInBpList)
+		if (!isHaveInBpList)
 			it = g_BreakpointList.erase(it);
 		else
 			it++;
