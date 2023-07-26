@@ -45,7 +45,6 @@ void PluginHandleSaveDB(CBTYPE cbType, PLUG_CB_LOADSAVEDB* info)
 			json_array_append_new(jsonBPList, jsonBP);
 		}
 		json_object_set_new(info->root, "bpList", jsonBPList);
-		_plugin_logprint(json_dumps(jsonBPList, 0));
 	}
 }
 
@@ -60,8 +59,6 @@ void PluginHandleLoadDB(CBTYPE cbType, PLUG_CB_LOADSAVEDB* info)
 
 	json_t* jsonBP;
 	size_t i;
-
-	_plugin_logprint(json_dumps(jsonBPList, 0));
 
 	json_array_foreach(jsonBPList, i, jsonBP)
 	{
@@ -198,7 +195,7 @@ INT_PTR CALLBACK ScriptEditorProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 
 					HWND scriptTextHwnd = GetDlgItem(hwndDlg, IDC_SCRIPT);
 					unsigned int scriptLength = GetWindowTextLengthA(scriptTextHwnd);
-					char* scriptContent = new char[scriptLength + 2];
+					char* scriptContent = new char[(unsigned long long)scriptLength + 2];
 					GetDlgItemTextA(hwndDlg, IDC_SCRIPT, scriptContent, scriptLength + 1);
 
 					std::map<duint, std::string>::const_iterator iter = g_BreakpointList.find(bpAddr);
