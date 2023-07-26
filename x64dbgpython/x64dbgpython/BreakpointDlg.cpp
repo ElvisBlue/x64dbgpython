@@ -11,12 +11,14 @@ std::map<duint, std::string> g_BreakpointList;
 
 void RefreshBpListBox(HWND hwnd);
 void CleanGarbageForBpMap();
+duint CalcBpHash(BRIDGEBP* bp);
+duint GetBpAtIndex(int index);
+duint GetBpHashAtIndex(int index);
 
 //Plugin breakpoint callback handle
 void PluginHandleBreakpoint(CBTYPE cbType, PLUG_CB_BREAKPOINT* info)
 {
-	duint breakAddr = info->breakpoint->addr;
-	std::map<duint, std::string>::const_iterator iter = g_BreakpointList.find(breakAddr);
+	std::map<duint, std::string>::const_iterator iter = g_BreakpointList.find(CalcBpHash(info->breakpoint));
 	if (iter != g_BreakpointList.end())
 	{
 		try
@@ -33,6 +35,7 @@ void PluginHandleBreakpoint(CBTYPE cbType, PLUG_CB_BREAKPOINT* info)
 //Plugin handle save data
 void PluginHandleSaveDB(CBTYPE cbType, PLUG_CB_LOADSAVEDB* info)
 {
+	CleanGarbageForBpMap();
 	json_t* jsonBPList = nullptr;
 	if (!g_BreakpointList.empty())
 	{
@@ -40,8 +43,31 @@ void PluginHandleSaveDB(CBTYPE cbType, PLUG_CB_LOADSAVEDB* info)
 		for (auto it = g_BreakpointList.cbegin(); it != g_BreakpointList.end(); it++)
 		{
 			json_t* jsonBP = json_object();
-			json_object_set_new(jsonBP, "addr", json_integer(it->first));
+			
+			//Correct breakpoint module relocation
+			
+			BPMAP bpList;
+			DbgGetBpList(bp_none, &bpList);
+
+			BRIDGEBP* currBp = nullptr;
+			for (int i = 0; i < bpList.count; i++)
+			{
+				if (CalcBpHash(&bpList.bp[i]) == it->first)
+				{
+					currBp = &bpList.bp[i];
+					break;
+				}
+			}
+
+			if (currBp == nullptr)
+				continue;
+
+			duint modBase = DbgFunctions()->ModBaseFromName(currBp->mod);
+			duint newAddr = currBp->addr - modBase;
+
+			json_object_set_new(jsonBP, "addr", json_integer(newAddr));
 			json_object_set_new(jsonBP, "command", json_string(it->second.c_str()));
+			json_object_set_new(jsonBP, "mod", json_string(currBp->mod));
 			json_array_append_new(jsonBPList, jsonBP);
 		}
 		json_object_set_new(info->root, "bpList", jsonBPList);
@@ -66,19 +92,17 @@ void PluginHandleLoadDB(CBTYPE cbType, PLUG_CB_LOADSAVEDB* info)
 		{
 			json_t* jsonAddr = json_object_get(jsonBP, "addr");
 			json_t* jsonCommand = json_object_get(jsonBP, "command");
-			if (json_is_integer(jsonAddr) && json_is_string(jsonCommand))
+			json_t* jsonMod = json_object_get(jsonBP, "mod");
+			if (json_is_integer(jsonAddr) && json_is_string(jsonCommand) && json_is_string(jsonMod))
 			{
-				g_BreakpointList.insert({ json_integer_value(jsonAddr), std::string(json_string_value(jsonCommand)) });
+				const char* mod = json_string_value(jsonMod);
+				duint offset = (duint)json_integer_value(jsonAddr);
+				duint hash = _plugin_hash(mod, strlen(mod)) + offset;
+
+				g_BreakpointList.insert({ hash, std::string(json_string_value(jsonCommand)) });
 			}
 		}
 	}
-}
-
-duint GetBpAtIndex(int index)
-{
-	BPMAP bpList;
-	DbgGetBpList(bp_none, &bpList);
-	return bpList.bp[index].addr;
 }
 
 INT_PTR CALLBACK BreakpointDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -118,8 +142,8 @@ INT_PTR CALLBACK BreakpointDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 					int pos = (int)SendMessage(bpListHwnd, LB_GETCURSEL, 0, 0);
 					if (pos != -1)
 					{
-						duint bpAddr = GetBpAtIndex(pos);
-						std::map<duint, std::string>::const_iterator iter = g_BreakpointList.find(bpAddr);
+						duint bpHash = GetBpHashAtIndex(pos);
+						std::map<duint, std::string>::const_iterator iter = g_BreakpointList.find(bpHash);
 						if (iter != g_BreakpointList.end())
 						{
 							SetDlgItemTextA(hwndDlg, IDC_SCRIPTCONTENT, iter->second.c_str());
@@ -142,8 +166,8 @@ INT_PTR CALLBACK BreakpointDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 						DialogBoxParam(g_dllInstance, MAKEINTRESOURCE(IDD_SCRIPTEDITOR), hwndDlg, ScriptEditorProc, (LPARAM)pos);
 						RefreshBpListBox(hwndDlg);
 						
-						duint bpAddr = GetBpAtIndex(pos);
-						std::map<duint, std::string>::const_iterator iter = g_BreakpointList.find(bpAddr);
+						duint bpHash = GetBpHashAtIndex(pos);
+						std::map<duint, std::string>::const_iterator iter = g_BreakpointList.find(bpHash);
 						if (iter != g_BreakpointList.end())
 						{
 							SetDlgItemTextA(hwndDlg, IDC_SCRIPTCONTENT, iter->second.c_str());
@@ -172,8 +196,8 @@ INT_PTR CALLBACK ScriptEditorProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 		case WM_INITDIALOG:
 		{
 			g_CurrentBpSelection = (int)lParam;
-			duint bpAddr = GetBpAtIndex(g_CurrentBpSelection);;
-			std::map<duint, std::string>::const_iterator iter = g_BreakpointList.find(bpAddr);
+			duint bpHash = GetBpHashAtIndex(g_CurrentBpSelection);;
+			std::map<duint, std::string>::const_iterator iter = g_BreakpointList.find(bpHash);
 			if (iter != g_BreakpointList.end())
 			{
 				SetDlgItemTextA(hwndDlg, IDC_SCRIPT, iter->second.c_str());
@@ -191,21 +215,21 @@ INT_PTR CALLBACK ScriptEditorProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 			{
 				if (HIWORD(wParam) == BN_CLICKED)
 				{
-					duint bpAddr = GetBpAtIndex(g_CurrentBpSelection);
+					duint bpHash = GetBpHashAtIndex(g_CurrentBpSelection);
 
 					HWND scriptTextHwnd = GetDlgItem(hwndDlg, IDC_SCRIPT);
 					unsigned int scriptLength = GetWindowTextLengthA(scriptTextHwnd);
 					char* scriptContent = new char[(unsigned long long)scriptLength + 2];
 					GetDlgItemTextA(hwndDlg, IDC_SCRIPT, scriptContent, scriptLength + 1);
 
-					std::map<duint, std::string>::const_iterator iter = g_BreakpointList.find(bpAddr);
+					std::map<duint, std::string>::const_iterator iter = g_BreakpointList.find(bpHash);
 					if (iter != g_BreakpointList.end())
 					{
 						g_BreakpointList.erase(iter);
 					}
 
 					if (scriptLength)
-						g_BreakpointList.insert({ bpAddr, std::string(scriptContent) });
+						g_BreakpointList.insert({ bpHash, std::string(scriptContent) });
 
 					delete[] scriptContent;
 
@@ -231,7 +255,7 @@ void RefreshBpListBox(HWND hwnd)
 	{
 		wchar_t bpAddrText[20];
 
-		if (g_BreakpointList.find(bpList.bp[i].addr) != g_BreakpointList.end())
+		if (g_BreakpointList.find(CalcBpHash(&bpList.bp[i])) != g_BreakpointList.end())
 			swprintf(bpAddrText, sizeof(bpAddrText) / 2, L"%p*", (void*)bpList.bp[i].addr);
 		else
 			swprintf(bpAddrText, sizeof(bpAddrText) / 2, L"%p", (void*)bpList.bp[i].addr);
@@ -249,7 +273,7 @@ void CleanGarbageForBpMap()
 		bool isHaveInBpList = false;
 		for (int i = 0; i < bpList.count; i++)
 		{
-			if (bpList.bp[i].addr == it->first)
+			if (CalcBpHash(&bpList.bp[i]) == it->first)
 			{
 				isHaveInBpList = true;
 				break;
@@ -260,4 +284,24 @@ void CleanGarbageForBpMap()
 		else
 			it++;
 	}
+}
+
+duint CalcBpHash(BRIDGEBP* bp)
+{
+	duint offset = bp->addr - DbgFunctions()->ModBaseFromName(bp->mod);
+	return _plugin_hash(bp->mod, strlen(bp->mod)) + offset;
+}
+
+duint GetBpAtIndex(int index)
+{
+	BPMAP bpList;
+	DbgGetBpList(bp_none, &bpList);
+	return bpList.bp[index].addr;
+}
+
+duint GetBpHashAtIndex(int index)
+{
+	BPMAP bpList;
+	DbgGetBpList(bp_none, &bpList);
+	return CalcBpHash(&bpList.bp[index]);
 }
