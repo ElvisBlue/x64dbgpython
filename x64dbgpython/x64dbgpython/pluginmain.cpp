@@ -58,5 +58,5 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 {
     if (fdwReason == DLL_PROCESS_ATTACH)
         g_dllInstance = hinstDLL;
-    return TRUE;
+    return FALSE;
 }
