@@ -7,7 +7,7 @@ x64dbg python is a x64dbg plugin allow you to run python script to interactive w
 - Install both python3 32 bit and 64 bit. Don't forget to add to path environment.
 - Copy plugin to x32dbg and x64dbg plugin folder  
 
-**New version of  x64dbg block load dependencies from PATH. Please use `snapshot_2023-03-03_01-29` or using unsigned x32dbg/x64dbg instead to load this plugin**
+**New version of  x64dbg block load dependencies from PATH. Please use `snapshot_2023-03-03_01-29` or using [PATH](https://github.com/ElvisBlue/PATH) plugin to load this plugin**
 
 # Wrapper
 
