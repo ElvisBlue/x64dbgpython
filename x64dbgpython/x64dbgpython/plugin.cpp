@@ -52,16 +52,16 @@ void __stdcall PyExecuteFileThread(char* fileBuffer)
 
         //Set some stuff and free after execution
         g_IsScriptRunning = false;
-        free(fileBuffer);
+        delete [] fileBuffer;
         PyEval_SetTrace(NULL, NULL);
         return;
     }
 
     g_IsScriptRunning = false;
 
-    //fileBuffer is dynamic memory allocated by malloc
-    //Need to be free before exit thread
-    free(fileBuffer);
+    //fileBuffer is dynamic memory allocated by new
+    //Need to be delete before exit thread
+    delete[] fileBuffer;
 
     //Remove the trace hook
     PyEval_SetTrace(NULL, NULL);
@@ -80,15 +80,14 @@ void PluginHandleMenuCommand(CBTYPE cbType, PLUG_CB_MENUENTRY* info)
             break;
         }
 
-        char* fileBuffer = (char*)malloc(MAX_PATH);
-        if (fileBuffer)
+        char* fileBuffer = new char[MAX_PATH];
+
+        memset(fileBuffer, 0, MAX_PATH);
+        if (OpenFileDialog(fileBuffer, MAX_PATH))
         {
-            memset(fileBuffer, 0, MAX_PATH);
-            if (OpenFileDialog(fileBuffer, sizeof(fileBuffer)))
-            {
-                g_hThread = CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)PyExecuteFileThread, fileBuffer, NULL, NULL);
-            }
+            g_hThread = CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)PyExecuteFileThread, fileBuffer, NULL, NULL);
         }
+
         break;
     }
     case menu_entry::MENU_STOP_SCRIPT:
@@ -131,9 +130,9 @@ void __stdcall PyCommandExecuteThread(char* cmd)
     }
     g_IsScriptRunning = false;
 
-    //cmd is dynamic memory allocated by malloc
-    //Need to be free before exit thread
-    free(cmd);
+    //cmd is dynamic memory allocated by new
+    //Need to be delete before exit thread
+    delete[] cmd;
 }
 
 bool PythonCommandExecute(const char* cmd)
@@ -141,16 +140,12 @@ bool PythonCommandExecute(const char* cmd)
     if (cmd)
     {
         size_t cmdLength = strlen(cmd);
-        char* newCmdBuffer = (char*)malloc(cmdLength + 1);
-        if (newCmdBuffer)
-        {
-            memset(newCmdBuffer, 0, cmdLength + 1);
-            strcpy_s(newCmdBuffer, cmdLength + 1, cmd);
-            g_hThread = CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)PyCommandExecuteThread, (LPVOID)newCmdBuffer, NULL, NULL);
-            return true;
-        }
-        else
-            return true;
+        char* newCmdBuffer = new char[cmdLength + 1];
+
+        memset(newCmdBuffer, 0, cmdLength + 1);
+        strcpy_s(newCmdBuffer, cmdLength + 1, cmd);
+        g_hThread = CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)PyCommandExecuteThread, (LPVOID)newCmdBuffer, NULL, NULL);
+        return true;
     }
     return false;
 }
