@@ -22,11 +22,13 @@
 #include "pluginsdk/_scriptapi_stack.h"
 #include "pluginsdk/_scriptapi_symbol.h"
 
+
 using namespace Script;
 namespace py = pybind11;
 
 namespace PyWrapper
 {
+	
 	namespace Argument
 	{
 		struct pyArgumentInfo
