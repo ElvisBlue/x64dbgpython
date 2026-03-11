@@ -19,6 +19,18 @@
     <Filter Include="pybind11">
       <UniqueIdentifier>{a678c17b-d18b-43bc-8849-f84c0f513b51}</UniqueIdentifier>
     </Filter>
+    <Filter Include="pybind11\stl">
+      <UniqueIdentifier>{f51cd66c-1725-4528-b550-7dca111a9a25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pybind11\conduit">
+      <UniqueIdentifier>{f5646c16-aada-470a-81de-508dd832ce8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pybind11\eigen">
+      <UniqueIdentifier>{776371d7-8b08-449e-a575-84ec809256d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pybind11\detail">
+      <UniqueIdentifier>{90c83fdc-8fdb-48c3-a3e6-b40aa5cb8ca1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="plugin.cpp">
@@ -179,6 +191,111 @@
     <ClInclude Include="BreakpointDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="pybind11\critical_section.h">
+      <Filter>pybind11</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\gil_safe_call_once.h">
+      <Filter>pybind11</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\gil_simple.h">
+      <Filter>pybind11</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\native_enum.h">
+      <Filter>pybind11</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\subinterpreter.h">
+      <Filter>pybind11</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\trampoline_self_life_support.h">
+      <Filter>pybind11</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\type_caster_pyobject_ptr.h">
+      <Filter>pybind11</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\typing.h">
+      <Filter>pybind11</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\warnings.h">
+      <Filter>pybind11</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\stl\filesystem.h">
+      <Filter>pybind11\stl</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\conduit\pybind11_conduit_v1.h">
+      <Filter>pybind11\conduit</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\conduit\pybind11_platform_abi_id.h">
+      <Filter>pybind11\conduit</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\conduit\wrap_include_python_h.h">
+      <Filter>pybind11\conduit</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\eigen\common.h">
+      <Filter>pybind11\eigen</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\eigen\matrix.h">
+      <Filter>pybind11\eigen</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\eigen\tensor.h">
+      <Filter>pybind11\eigen</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\detail\argument_vector.h">
+      <Filter>pybind11\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\detail\class.h">
+      <Filter>pybind11\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\detail\common.h">
+      <Filter>pybind11\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\detail\cpp_conduit.h">
+      <Filter>pybind11\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\detail\descr.h">
+      <Filter>pybind11\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\detail\dynamic_raw_ptr_cast_if_possible.h">
+      <Filter>pybind11\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\detail\exception_translation.h">
+      <Filter>pybind11\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\detail\function_record_pyobject.h">
+      <Filter>pybind11\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\detail\function_ref.h">
+      <Filter>pybind11\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\detail\holder_caster_foreign_helpers.h">
+      <Filter>pybind11\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\detail\init.h">
+      <Filter>pybind11\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\detail\internals.h">
+      <Filter>pybind11\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\detail\native_enum_data.h">
+      <Filter>pybind11\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\detail\pybind11_namespace_macros.h">
+      <Filter>pybind11\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\detail\struct_smart_holder.h">
+      <Filter>pybind11\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\detail\type_caster_base.h">
+      <Filter>pybind11\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\detail\typeid.h">
+      <Filter>pybind11\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\detail\using_smart_holder.h">
+      <Filter>pybind11\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="pybind11\detail\value_and_holder.h">
+      <Filter>pybind11\detail</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="pluginsdk\x32bridge.lib">
@@ -203,5 +320,10 @@
     <ResourceCompile Include="x64dbgpython.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="pybind11\conduit\README.txt">
+      <Filter>pybind11\conduit</Filter>
+    </Text>
   </ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31205.134
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36908.2 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "x64dbgpython", "x64dbgpython\x64dbgpython.vcxproj", "{02A6F88C-A2D7-4872-8FD5-9336E777902C}"
 EndProject
@@ -11,6 +11,8 @@ Global
 		Debug|x86 = Debug|x86
 		Release 310|x64 = Release 310|x64
 		Release 310|x86 = Release 310|x86
+		Release 312|x64 = Release 312|x64
+		Release 312|x86 = Release 312|x86
 		Release 38|x64 = Release 38|x64
 		Release 38|x86 = Release 38|x86
 	EndGlobalSection
@@ -23,6 +25,10 @@ Global
 		{02A6F88C-A2D7-4872-8FD5-9336E777902C}.Release 310|x64.Build.0 = Release 310|x64
 		{02A6F88C-A2D7-4872-8FD5-9336E777902C}.Release 310|x86.ActiveCfg = Release 310|Win32
 		{02A6F88C-A2D7-4872-8FD5-9336E777902C}.Release 310|x86.Build.0 = Release 310|Win32
+		{02A6F88C-A2D7-4872-8FD5-9336E777902C}.Release 312|x64.ActiveCfg = Release 312|x64
+		{02A6F88C-A2D7-4872-8FD5-9336E777902C}.Release 312|x64.Build.0 = Release 312|x64
+		{02A6F88C-A2D7-4872-8FD5-9336E777902C}.Release 312|x86.ActiveCfg = Release 312|Win32
+		{02A6F88C-A2D7-4872-8FD5-9336E777902C}.Release 312|x86.Build.0 = Release 312|Win32
 		{02A6F88C-A2D7-4872-8FD5-9336E777902C}.Release 38|x64.ActiveCfg = Release|x64
 		{02A6F88C-A2D7-4872-8FD5-9336E777902C}.Release 38|x64.Build.0 = Release|x64
 		{02A6F88C-A2D7-4872-8FD5-9336E777902C}.Release 38|x86.ActiveCfg = Release|Win32

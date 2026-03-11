@@ -13,6 +13,14 @@
       <Configuration>Release 310</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Release 312|Win32">
+      <Configuration>Release 312</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release 312|x64">
+      <Configuration>Release 312</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
@@ -66,19 +74,54 @@
     <ClInclude Include="pybind11\chrono.h" />
     <ClInclude Include="pybind11\common.h" />
     <ClInclude Include="pybind11\complex.h" />
+    <ClInclude Include="pybind11\conduit\pybind11_conduit_v1.h" />
+    <ClInclude Include="pybind11\conduit\pybind11_platform_abi_id.h" />
+    <ClInclude Include="pybind11\conduit\wrap_include_python_h.h" />
+    <ClInclude Include="pybind11\critical_section.h" />
+    <ClInclude Include="pybind11\detail\argument_vector.h" />
+    <ClInclude Include="pybind11\detail\class.h" />
+    <ClInclude Include="pybind11\detail\common.h" />
+    <ClInclude Include="pybind11\detail\cpp_conduit.h" />
+    <ClInclude Include="pybind11\detail\descr.h" />
+    <ClInclude Include="pybind11\detail\dynamic_raw_ptr_cast_if_possible.h" />
+    <ClInclude Include="pybind11\detail\exception_translation.h" />
+    <ClInclude Include="pybind11\detail\function_record_pyobject.h" />
+    <ClInclude Include="pybind11\detail\function_ref.h" />
+    <ClInclude Include="pybind11\detail\holder_caster_foreign_helpers.h" />
+    <ClInclude Include="pybind11\detail\init.h" />
+    <ClInclude Include="pybind11\detail\internals.h" />
+    <ClInclude Include="pybind11\detail\native_enum_data.h" />
+    <ClInclude Include="pybind11\detail\pybind11_namespace_macros.h" />
+    <ClInclude Include="pybind11\detail\struct_smart_holder.h" />
+    <ClInclude Include="pybind11\detail\typeid.h" />
+    <ClInclude Include="pybind11\detail\type_caster_base.h" />
+    <ClInclude Include="pybind11\detail\using_smart_holder.h" />
+    <ClInclude Include="pybind11\detail\value_and_holder.h" />
     <ClInclude Include="pybind11\eigen.h" />
+    <ClInclude Include="pybind11\eigen\common.h" />
+    <ClInclude Include="pybind11\eigen\matrix.h" />
+    <ClInclude Include="pybind11\eigen\tensor.h" />
     <ClInclude Include="pybind11\embed.h" />
     <ClInclude Include="pybind11\eval.h" />
     <ClInclude Include="pybind11\functional.h" />
     <ClInclude Include="pybind11\gil.h" />
+    <ClInclude Include="pybind11\gil_safe_call_once.h" />
+    <ClInclude Include="pybind11\gil_simple.h" />
     <ClInclude Include="pybind11\iostream.h" />
+    <ClInclude Include="pybind11\native_enum.h" />
     <ClInclude Include="pybind11\numpy.h" />
     <ClInclude Include="pybind11\operators.h" />
     <ClInclude Include="pybind11\options.h" />
     <ClInclude Include="pybind11\pybind11.h" />
     <ClInclude Include="pybind11\pytypes.h" />
     <ClInclude Include="pybind11\stl.h" />
+    <ClInclude Include="pybind11\stl\filesystem.h" />
     <ClInclude Include="pybind11\stl_bind.h" />
+    <ClInclude Include="pybind11\subinterpreter.h" />
+    <ClInclude Include="pybind11\trampoline_self_life_support.h" />
+    <ClInclude Include="pybind11\type_caster_pyobject_ptr.h" />
+    <ClInclude Include="pybind11\typing.h" />
+    <ClInclude Include="pybind11\warnings.h" />
     <ClInclude Include="pystream.h" />
     <ClInclude Include="resource1.h" />
   </ItemGroup>
@@ -93,6 +136,9 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="x64dbgpython.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="pybind11\conduit\README.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -116,6 +162,13 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release 310|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release 312|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
@@ -146,6 +199,15 @@
     <DisableAdvancedSupport>true</DisableAdvancedSupport>
     <SupportLTL>true</SupportLTL>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release 312|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <DisableAdvancedSupport>true</DisableAdvancedSupport>
+    <SupportLTL>true</SupportLTL>
+  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
@@ -160,6 +222,9 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release 310|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release 312|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -167,6 +232,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release 310|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release 312|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -183,6 +251,11 @@
     <TargetExt>.dp32</TargetExt>
     <OutDir>$(SolutionDir)$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release 312|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <TargetExt>.dp32</TargetExt>
+    <OutDir>$(SolutionDir)$(Configuration)\$(Platform)\</OutDir>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
@@ -192,6 +265,11 @@
     <OutDir>$(SolutionDir)$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release 310|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <TargetExt>.dp64</TargetExt>
+    <OutDir>$(SolutionDir)$(Configuration)\$(Platform)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release 312|x64'">
     <LinkIncremental>false</LinkIncremental>
     <TargetExt>.dp64</TargetExt>
     <OutDir>$(SolutionDir)$(Configuration)\$(Platform)\</OutDir>
@@ -225,7 +303,7 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>Default</LanguageStandard>
       <LanguageStandard_C>Default</LanguageStandard_C>
-      <AdditionalIncludeDirectories>.\PythonLibs\Python38\x86\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\PythonLibs\Python38\x86\include;.</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -239,6 +317,33 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release 310|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;X64DBGPYTHON_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <Optimization>MinSpace</Optimization>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>Default</LanguageStandard>
+      <LanguageStandard_C>Default</LanguageStandard_C>
+      <AdditionalIncludeDirectories>.\PythonLibs\Python310\x86\include;.</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+      <AdditionalLibraryDirectories>.\PythonLibs\Python310\x86\libs</AdditionalLibraryDirectories>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release 312|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -292,7 +397,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <Optimization>MinSpace</Optimization>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>.\PythonLibs\Python38\x64\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\PythonLibs\Python38\x64\include;.</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -319,7 +424,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <Optimization>MinSpace</Optimization>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>.\PythonLibs\Python310\x64\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\PythonLibs\Python310\x64\include;.</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -328,6 +433,33 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>.\PythonLibs\Python310\x64\libs</AdditionalLibraryDirectories>
+      <ProgramDatabaseFile>
+      </ProgramDatabaseFile>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release 312|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;X64DBGPYTHON_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <Optimization>MinSpace</Optimization>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalIncludeDirectories>.\PythonLibs\Python312\x64\include;.</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+      <AdditionalLibraryDirectories>.\PythonLibs\Python312\x64\libs</AdditionalLibraryDirectories>
       <ProgramDatabaseFile>
       </ProgramDatabaseFile>
       <DelayLoadDLLs>
