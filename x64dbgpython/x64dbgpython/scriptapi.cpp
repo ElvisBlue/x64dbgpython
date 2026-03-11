@@ -87,17 +87,17 @@ namespace PyWrapper
 
 	namespace Assembler
 	{
-		py::bytes Assemble(duint addr, const char* instruction)
+		py::object Assemble(duint addr, const char* instruction)
 		{
 			unsigned char dest[16] = { 0 };
 			int size = 0;
 			if (Script::Assembler::Assemble(addr, dest, &size, instruction))
 				return py::bytes((char*)dest, size);
 			else
-				return nullptr;
+				return py::none();
 		}
 
-		py::bytes AssembleEx(duint addr, const char* instruction)
+		py::object AssembleEx(duint addr, const char* instruction)
 		{
 			//Crash. Dunno why??
 			//TODO: Check this
@@ -109,7 +109,7 @@ namespace PyWrapper
 			else
 			{
 				_plugin_logprintf("AssembleEx error: %s\n", retError);
-				return nullptr;
+				return py::none();
 			}
 		}
 
@@ -439,19 +439,19 @@ namespace PyWrapper
 
 	namespace Memory
 	{
-		py::bytes Read(duint addr, duint size)
+		py::object Read(duint addr, duint size)
 		{
 			unsigned char* readData = (unsigned char*)malloc(size);
 			if (readData == nullptr)
-				return nullptr;
+				return py::none();
 
 			memset(readData, 0, size);
 			duint sizeRead = 0;
-			py::bytes ret;
+			py::object ret;
 			if (Script::Memory::Read(addr, readData, size, &sizeRead))
 				ret = py::bytes((char*)readData, sizeRead);
 			else
-				ret = nullptr;
+				ret = py::none();
 			
 			free(readData);
 			return ret;

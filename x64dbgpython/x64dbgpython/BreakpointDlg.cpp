@@ -40,15 +40,14 @@ void PluginHandleSaveDB(CBTYPE cbType, PLUG_CB_LOADSAVEDB* info)
 	if (!g_BreakpointList.empty())
 	{
 		jsonBPList = json_array();
+		BPMAP bpList;
+		DbgGetBpList(bp_none, &bpList);
 		for (auto it = g_BreakpointList.cbegin(); it != g_BreakpointList.end(); it++)
 		{
 			json_t* jsonBP = json_object();
 			
 			//Correct breakpoint module relocation
 			
-			BPMAP bpList;
-			DbgGetBpList(bp_none, &bpList);
-
 			BRIDGEBP* currBp = nullptr;
 			for (int i = 0; i < bpList.count; i++)
 			{
@@ -70,6 +69,8 @@ void PluginHandleSaveDB(CBTYPE cbType, PLUG_CB_LOADSAVEDB* info)
 			json_object_set_new(jsonBP, "mod", json_string(currBp->mod));
 			json_array_append_new(jsonBPList, jsonBP);
 		}
+		if (bpList.bp) 
+			BridgeFree(bpList.bp);
 		json_object_set_new(info->root, "bpList", jsonBPList);
 	}
 }
@@ -261,6 +262,8 @@ void RefreshBpListBox(HWND hwnd)
 			swprintf(bpAddrText, sizeof(bpAddrText) / 2, L"%p", (void*)bpList.bp[i].addr);
 		SendMessage(bpListHwnd, LB_ADDSTRING, NULL, (LPARAM)bpAddrText);
 	}
+	if (bpList.bp) 
+		BridgeFree(bpList.bp);
 }
 
 void CleanGarbageForBpMap()
@@ -284,6 +287,8 @@ void CleanGarbageForBpMap()
 		else
 			it++;
 	}
+	if (bpList.bp) 
+		BridgeFree(bpList.bp);
 }
 
 duint CalcBpHash(BRIDGEBP* bp)
@@ -296,12 +301,18 @@ duint GetBpAtIndex(int index)
 {
 	BPMAP bpList;
 	DbgGetBpList(bp_none, &bpList);
-	return bpList.bp[index].addr;
+	duint addr = bpList.bp[index].addr;
+	if (bpList.bp) 
+		BridgeFree(bpList.bp);
+	return addr;
 }
 
 duint GetBpHashAtIndex(int index)
 {
 	BPMAP bpList;
 	DbgGetBpList(bp_none, &bpList);
-	return CalcBpHash(&bpList.bp[index]);
+	duint hash = CalcBpHash(&bpList.bp[index]);
+	if (bpList.bp) 
+		BridgeFree(bpList.bp);
+	return hash;
 }

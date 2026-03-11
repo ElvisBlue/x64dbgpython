@@ -125,7 +125,7 @@ void __stdcall PyCommandExecuteThread(char* cmd)
     {
         _plugin_logprint(e.what());
         g_IsScriptRunning = false;
-        free(cmd);
+        delete[] cmd;
         return;
     }
     g_IsScriptRunning = false;
@@ -179,6 +179,10 @@ bool pluginInit(PLUG_INITSTRUCT* initStruct)
 //Deinitialize your plugin data here.
 void pluginStop()
 {
+    
+    if ((g_IsScriptRunning) && (!g_Interupt))
+        g_Interupt = true;
+    
     py::finalize_interpreter();
 }
 
