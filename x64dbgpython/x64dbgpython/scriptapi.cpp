@@ -1,4 +1,6 @@
 #include <Windows.h>
+#include <optional>
+#include <memory>
 #include "pybind11/embed.h"
 #include "pybind11/stl_bind.h"
 #include "pybind11/stl.h"
@@ -40,34 +42,34 @@ namespace PyWrapper
 			duint instructioncount;
 		};
 
-		pyArgumentInfo* GetInfo(duint addr)
+		std::optional<pyArgumentInfo> GetInfo(duint addr)
 		{
 			Script::Argument::ArgumentInfo tmpInfo = { 0 };
 			if (!Script::Argument::GetInfo(addr, &tmpInfo))
 			{
-				return nullptr;
+				return std::nullopt;
 			}
 			else
 			{
-				pyArgumentInfo* retData = new pyArgumentInfo();
-				retData->mod = tmpInfo.mod;
-				retData->rvaStart = tmpInfo.rvaStart;
-				retData->manual = tmpInfo.manual;
-				retData->instructioncount = tmpInfo.instructioncount;
+				pyArgumentInfo retData;
+				retData.mod = tmpInfo.mod;
+				retData.rvaStart = tmpInfo.rvaStart;
+				retData.manual = tmpInfo.manual;
+				retData.instructioncount = tmpInfo.instructioncount;
 				return retData;
 			}
 		}
 
-		std::vector<pyArgumentInfo>* GetList()
+		std::optional<std::vector<pyArgumentInfo>> GetList()
 		{
-			std::vector<pyArgumentInfo>* list = nullptr;
-			ListOf(ArgumentInfo) tmpList = new ListInfo();
+			auto tmpList = std::make_unique<ListInfo>();
 
-			if (Script::Argument::GetList(tmpList))
+			if (Script::Argument::GetList(tmpList.get()))
 			{
-				list = new std::vector<pyArgumentInfo>();
+				std::vector<pyArgumentInfo> list;
 				std::vector<Script::Argument::ArgumentInfo> argumentInfoList;
-				BridgeList<Script::Argument::ArgumentInfo>::ToVector(tmpList, argumentInfoList, true);
+				BridgeList<Script::Argument::ArgumentInfo>::ToVector(tmpList.get(), argumentInfoList, true);
+				list.reserve(argumentInfoList.size());
 				for (auto it = argumentInfoList.begin(); it != argumentInfoList.end(); it++)
 				{
 					pyArgumentInfo item;
@@ -76,12 +78,12 @@ namespace PyWrapper
 					item.mod = it->mod;
 					item.rvaEnd = it->rvaEnd;
 					item.rvaStart = it->rvaStart;
-					list->push_back(item);
+					list.push_back(item);
 				}
+				return list;
 			}
 
-			delete tmpList;
-			return list;
+			return std::nullopt;
 		}
 	}
 
@@ -137,42 +139,42 @@ namespace PyWrapper
 		};
 
 
-		pyBookmarkInfo* GetInfo(duint addr)
+		std::optional<pyBookmarkInfo> GetInfo(duint addr)
 		{
 			Script::Bookmark::BookmarkInfo tmpInfo = { 0 };
 			if (Script::Bookmark::GetInfo(addr, &tmpInfo))
 			{
-				pyBookmarkInfo* info = new pyBookmarkInfo();
-				info->manual = tmpInfo.manual;
-				info->mod = tmpInfo.mod;
-				info->rva = tmpInfo.rva;
+				pyBookmarkInfo info;
+				info.manual = tmpInfo.manual;
+				info.mod = tmpInfo.mod;
+				info.rva = tmpInfo.rva;
 				return info;
 			}
 			else
-				return nullptr;
+				return std::nullopt;
 		}
 
-		std::vector<pyBookmarkInfo>* GetList()
+		std::optional<std::vector<pyBookmarkInfo>> GetList()
 		{
-			std::vector<pyBookmarkInfo>* list = nullptr;
-			ListOf(BookmarkInfo) tmpList = new ListInfo();
-			if (Script::Bookmark::GetList(tmpList))
+			auto tmpList = std::make_unique<ListInfo>();
+			if (Script::Bookmark::GetList(tmpList.get()))
 			{
-				list = new std::vector<pyBookmarkInfo>();
+				std::vector<pyBookmarkInfo> list;
 				std::vector<Script::Bookmark::BookmarkInfo> bookmarkInfoList;
-				BridgeList<Script::Bookmark::BookmarkInfo>::ToVector(tmpList, bookmarkInfoList, true);
+				BridgeList<Script::Bookmark::BookmarkInfo>::ToVector(tmpList.get(), bookmarkInfoList, true);
+				list.reserve(bookmarkInfoList.size());
 				for (auto it = bookmarkInfoList.begin(); it != bookmarkInfoList.end(); it++)
 				{
 					pyBookmarkInfo item;
 					item.manual = it->manual;
 					item.mod = it->mod;
 					item.rva = it->rva;
-					list->push_back(item);
+					list.push_back(item);
 				}
+				return list;
 			}
 
-			delete tmpList;
-			return list;
+			return std::nullopt;
 		}
 	}
 
@@ -193,31 +195,31 @@ namespace PyWrapper
 			return retText;
 		}
 
-		pyCommentInfo* GetInfo(duint addr)
+		std::optional<pyCommentInfo> GetInfo(duint addr)
 		{
 			Script::Comment::CommentInfo tmpInfo = { 0 };
 			if (Script::Comment::GetInfo(addr, &tmpInfo))
 			{
-				pyCommentInfo* info = new pyCommentInfo();
-				info->manual = tmpInfo.manual;
-				info->mod = tmpInfo.mod;
-				info->rva = tmpInfo.rva;
-				info->text = tmpInfo.text;
+				pyCommentInfo info;
+				info.manual = tmpInfo.manual;
+				info.mod = tmpInfo.mod;
+				info.rva = tmpInfo.rva;
+				info.text = tmpInfo.text;
 				return info;
 			}
 			else
-				return nullptr;
+				return std::nullopt;
 		}
 
-		std::vector<pyCommentInfo>* GetList()
+		std::optional<std::vector<pyCommentInfo>> GetList()
 		{
-			std::vector<pyCommentInfo>* list = nullptr;
-			ListOf(Script::Comment::CommentInfo) tmpList = new ListInfo();
-			if (Script::Comment::GetList(tmpList))
+			auto tmpList = std::make_unique<ListInfo>();
+			if (Script::Comment::GetList(tmpList.get()))
 			{
-				list = new std::vector<pyCommentInfo>();
+				std::vector<pyCommentInfo> list;
 				std::vector<Script::Comment::CommentInfo> commentInfoList;
-				BridgeList<Script::Comment::CommentInfo>::ToVector(tmpList, commentInfoList, true);
+				BridgeList<Script::Comment::CommentInfo>::ToVector(tmpList.get(), commentInfoList, true);
+				list.reserve(commentInfoList.size());
 				for (auto it = commentInfoList.begin(); it != commentInfoList.end(); it++)
 				{
 					pyCommentInfo item;
@@ -225,11 +227,11 @@ namespace PyWrapper
 					item.mod = it->mod;
 					item.rva = it->rva;
 					item.text = it->text;
-					list->push_back(item);
+					list.push_back(item);
 				}
+				return list;
 			}
-			delete tmpList;
-			return list;
+			return std::nullopt;
 		}
 	}
 
@@ -244,32 +246,32 @@ namespace PyWrapper
 			duint instructioncount;
 		};
 
-		pyFunctionInfo* GetInfo(duint addr)
+		std::optional<pyFunctionInfo> GetInfo(duint addr)
 		{
 			Script::Function::FunctionInfo tmpInfo = { 0 };
 			if (Script::Function::GetInfo(addr, &tmpInfo))
 			{
-				pyFunctionInfo* info = new pyFunctionInfo();
-				info->mod = tmpInfo.mod;
-				info->rvaStart = tmpInfo.rvaStart;
-				info->rvaEnd = tmpInfo.rvaEnd;
-				info->manual = tmpInfo.manual;
-				info->instructioncount = tmpInfo.instructioncount;
+				pyFunctionInfo info;
+				info.mod = tmpInfo.mod;
+				info.rvaStart = tmpInfo.rvaStart;
+				info.rvaEnd = tmpInfo.rvaEnd;
+				info.manual = tmpInfo.manual;
+				info.instructioncount = tmpInfo.instructioncount;
 				return info;
 			}
 			else
-				return nullptr;
+				return std::nullopt;
 		}
 
-		std::vector<pyFunctionInfo>* GetList()
+		std::optional<std::vector<pyFunctionInfo>> GetList()
 		{
-			std::vector<pyFunctionInfo>* list = nullptr;
-			ListOf(Script::Function::FunctionInfo) tmpList = new ListInfo();
-			if (Script::Function::GetList(tmpList))
+			auto tmpList = std::make_unique<ListInfo>();
+			if (Script::Function::GetList(tmpList.get()))
 			{
-				list = new std::vector<pyFunctionInfo>();
+				std::vector<pyFunctionInfo> list;
 				std::vector<Script::Function::FunctionInfo> functionInfoList;
-				BridgeList<Script::Function::FunctionInfo>::ToVector(tmpList, functionInfoList, true);
+				BridgeList<Script::Function::FunctionInfo>::ToVector(tmpList.get(), functionInfoList, true);
+				list.reserve(functionInfoList.size());
 				for (auto it = functionInfoList.begin(); it != functionInfoList.end(); it++)
 				{
 					pyFunctionInfo item;
@@ -278,11 +280,11 @@ namespace PyWrapper
 					item.mod = it->mod;
 					item.rvaEnd = it->rvaEnd;
 					item.rvaStart = it->rvaStart;
-					list->push_back(item);
+					list.push_back(item);
 				}
+				return list;
 			}
-			delete tmpList;
-			return list;
+			return std::nullopt;
 		}
 	}
 
@@ -291,67 +293,67 @@ namespace PyWrapper
 		
 		namespace Disassembly
 		{
-			std::vector<duint>* SelectionGet()
+			std::optional<std::vector<duint>> SelectionGet()
 			{
-				std::vector<duint>* ret = nullptr;
 				duint start = 0;
 				duint end = 0;
 				if (Script::Gui::Disassembly::SelectionGet(&start, &end))
 				{
-					ret = new std::vector<duint>();
-					ret->push_back(start);
-					ret->push_back(end);
+					std::vector<duint> ret;
+					ret.push_back(start);
+					ret.push_back(end);
+					return ret;
 				}
-				return ret;
+				return std::nullopt;
 			}
 		}
 
 		namespace Dump
 		{
-			std::vector<duint>* SelectionGet()
+			std::optional<std::vector<duint>> SelectionGet()
 			{
-				std::vector<duint>* ret = nullptr;
 				duint start = 0;
 				duint end = 0;
 				if (Script::Gui::Dump::SelectionGet(&start, &end))
 				{
-					ret = new std::vector<duint>();
-					ret->push_back(start);
-					ret->push_back(end);
+					std::vector<duint> ret;
+					ret.push_back(start);
+					ret.push_back(end);
+					return ret;
 				}
-				return ret;
+				return std::nullopt;
 			}
 		}
 
 		namespace Stack
 		{
-			std::vector<duint>* SelectionGet()
+			std::optional<std::vector<duint>> SelectionGet()
 			{
-				std::vector<duint>* ret = nullptr;
 				duint start = 0;
 				duint end = 0;
 				if (Script::Gui::Stack::SelectionGet(&start, &end))
 				{
-					ret = new std::vector<duint>();
-					ret->push_back(start);
-					ret->push_back(end);
+					std::vector<duint> ret;
+					ret.push_back(start);
+					ret.push_back(end);
+					return ret;
 				}
-				return ret;
+				return std::nullopt;
 			}
 		}
 
-		std::vector<duint>* SelectionGet(Script::Gui::Window window)
+		std::optional<std::vector<duint>> SelectionGet(Script::Gui::Window window)
 		{
-			std::vector<duint>* ret = nullptr;
 			duint start = 0;
 			duint end = 0;
 			if (Script::Gui::SelectionGet(window, &start, &end))
 			{
-				ret = new std::vector<duint>();
-				ret->push_back(start);
-				ret->push_back(end);
+				std::vector<duint> ret;
+				ret.push_back(start);
+				ret.push_back(end);
+				return ret;
 			}
-			return ret;
+			return std::nullopt;
 		}
 		
 
@@ -396,31 +398,31 @@ namespace PyWrapper
 			return retText;
 		}
 
-		pyLabelInfo* GetInfo(duint addr)
+		std::optional<pyLabelInfo> GetInfo(duint addr)
 		{
 			Script::Label::LabelInfo tmpInfo = { 0 };
 			if (Script::Label::GetInfo(addr, &tmpInfo))
 			{
-				pyLabelInfo* info = new pyLabelInfo();
-				info->manual = tmpInfo.manual;
-				info->mod = tmpInfo.mod;
-				info->rva = tmpInfo.rva;
-				info->text = tmpInfo.text;
+				pyLabelInfo info;
+				info.manual = tmpInfo.manual;
+				info.mod = tmpInfo.mod;
+				info.rva = tmpInfo.rva;
+				info.text = tmpInfo.text;
 				return info;
 			}
 			else
-				return nullptr;
+				return std::nullopt;
 		}
 
-		std::vector<pyLabelInfo>* GetList()
+		std::optional<std::vector<pyLabelInfo>> GetList()
 		{
-			std::vector<pyLabelInfo>* list = nullptr;
-			ListOf(Script::Label::LabelInfo) tmpList = new ListInfo();
-			if (Script::Label::GetList(tmpList))
+			auto tmpList = std::make_unique<ListInfo>();
+			if (Script::Label::GetList(tmpList.get()))
 			{
-				list = new std::vector<pyLabelInfo>();
+				std::vector<pyLabelInfo> list;
 				std::vector<Script::Label::LabelInfo> labelInfoList;
-				BridgeList<Script::Label::LabelInfo>::ToVector(tmpList, labelInfoList, true);
+				BridgeList<Script::Label::LabelInfo>::ToVector(tmpList.get(), labelInfoList, true);
+				list.reserve(labelInfoList.size());
 				for (auto it = labelInfoList.begin(); it != labelInfoList.end(); it++)
 				{
 					pyLabelInfo item;
@@ -428,12 +430,12 @@ namespace PyWrapper
 					item.mod = it->mod;
 					item.rva = it->rva;
 					item.text = it->text;
-					list->push_back(item);
+					list.push_back(item);
 				}
+				return list;
 			}
 
-			delete tmpList;
-			return list;
+			return std::nullopt;
 		}
 	}
 
@@ -508,40 +510,40 @@ namespace PyWrapper
 			std::string undecoratedName;
 		};
 
-		pyModuleInfo* InfoFromAddr(duint addr)
+		std::optional<pyModuleInfo> InfoFromAddr(duint addr)
 		{
 			Script::Module::ModuleInfo tmpInfo = { 0 };
 			if (Script::Module::InfoFromAddr(addr, &tmpInfo))
 			{
-				pyModuleInfo* info = new pyModuleInfo();
-				info->base = tmpInfo.base;
-				info->entry = tmpInfo.entry;
-				info->name = tmpInfo.name;
-				info->path = tmpInfo.path;
-				info->sectionCount = tmpInfo.sectionCount;
-				info->size = tmpInfo.size;
+				pyModuleInfo info;
+				info.base = tmpInfo.base;
+				info.entry = tmpInfo.entry;
+				info.name = tmpInfo.name;
+				info.path = tmpInfo.path;
+				info.sectionCount = tmpInfo.sectionCount;
+				info.size = tmpInfo.size;
 				return info;
 			}
 			else
-				return nullptr;
+				return std::nullopt;
 		}
 
-		pyModuleInfo* InfoFromName(const char* name)
+		std::optional<pyModuleInfo> InfoFromName(const char* name)
 		{
 			Script::Module::ModuleInfo tmpInfo = { 0 };
 			if (Script::Module::InfoFromName(name, &tmpInfo))
 			{
-				pyModuleInfo* info = new pyModuleInfo();
-				info->base = tmpInfo.base;
-				info->entry = tmpInfo.entry;
-				info->name = tmpInfo.name;
-				info->path = tmpInfo.path;
-				info->sectionCount = tmpInfo.sectionCount;
-				info->size = tmpInfo.size;
+				pyModuleInfo info;
+				info.base = tmpInfo.base;
+				info.entry = tmpInfo.entry;
+				info.name = tmpInfo.name;
+				info.path = tmpInfo.path;
+				info.sectionCount = tmpInfo.sectionCount;
+				info.size = tmpInfo.size;
 				return info;
 			}
 			else
-				return nullptr;
+				return std::nullopt;
 		}
 
 		std::string NameFromAddr(duint addr)
@@ -571,94 +573,95 @@ namespace PyWrapper
 				return "";
 		}
 
-		pyModuleSectionInfo* SectionFromAddr(duint addr, int number)
+		std::optional<pyModuleSectionInfo> SectionFromAddr(duint addr, int number)
 		{
 			Script::Module::ModuleSectionInfo tmpInfo = { 0 };
 			if (Script::Module::SectionFromAddr(addr, number, &tmpInfo))
 			{
-				pyModuleSectionInfo* section = new pyModuleSectionInfo();
-				section->addr = tmpInfo.addr;
-				section->name = tmpInfo.name;
-				section->size = tmpInfo.size;
+				pyModuleSectionInfo section;
+				section.addr = tmpInfo.addr;
+				section.name = tmpInfo.name;
+				section.size = tmpInfo.size;
 				return section;
 			}
 			else
-				return nullptr;
+				return std::nullopt;
 		}
 
-		pyModuleSectionInfo* SectionFromName(const char* name, int number)
+		std::optional<pyModuleSectionInfo> SectionFromName(const char* name, int number)
 		{
 			Script::Module::ModuleSectionInfo tmpInfo = { 0 };
 			if (Script::Module::SectionFromName(name, number, &tmpInfo))
 			{
-				pyModuleSectionInfo* section = new pyModuleSectionInfo();
-				section->addr = tmpInfo.addr;
-				section->name = tmpInfo.name;
-				section->size = tmpInfo.size;
+				pyModuleSectionInfo section;
+				section.addr = tmpInfo.addr;
+				section.name = tmpInfo.name;
+				section.size = tmpInfo.size;
+				return section;
 			}
-				return nullptr;
+			return std::nullopt;
 		}
 
-		std::vector<pyModuleSectionInfo>* SectionListFromAddr(duint addr)
+		std::optional<std::vector<pyModuleSectionInfo>> SectionListFromAddr(duint addr)
 		{
-			std::vector<pyModuleSectionInfo>* list = nullptr;
-			ListOf(Script::Module::ModuleSectionInfo) tmpList = new ListInfo();
-			if (Script::Module::SectionListFromAddr(addr, tmpList))
+			auto tmpList = std::make_unique<ListInfo>();
+			if (Script::Module::SectionListFromAddr(addr, tmpList.get()))
 			{
-				list = new std::vector<pyModuleSectionInfo>();
+				std::vector<pyModuleSectionInfo> list;
 				std::vector<Script::Module::ModuleSectionInfo> moduleSectionInfoList;
-				BridgeList<Script::Module::ModuleSectionInfo>::ToVector(tmpList, moduleSectionInfoList, true);
+				BridgeList<Script::Module::ModuleSectionInfo>::ToVector(tmpList.get(), moduleSectionInfoList, true);
+				list.reserve(moduleSectionInfoList.size());
 				for (auto it = moduleSectionInfoList.begin(); it != moduleSectionInfoList.end(); it++)
 				{
 					pyModuleSectionInfo item = { 0 };
 					item.addr = it->addr;
 					item.name = it->name;
 					item.size = it->size;
-					list->push_back(item);
+					list.push_back(item);
 				}
+				return list;
 			}
-			delete tmpList;
-			return list;
+			return std::nullopt;
 		}
 
-		std::vector<pyModuleSectionInfo>* SectionListFromName(const char* name)
+		std::optional<std::vector<pyModuleSectionInfo>> SectionListFromName(const char* name)
 		{
-			std::vector<pyModuleSectionInfo>* list = nullptr;
-			ListOf(Script::Module::ModuleSectionInfo) tmpList = new ListInfo();
-			if (Script::Module::SectionListFromName(name, tmpList))
+			auto tmpList = std::make_unique<ListInfo>();
+			if (Script::Module::SectionListFromName(name, tmpList.get()))
 			{
-				list = new std::vector<pyModuleSectionInfo>();
+				std::vector<pyModuleSectionInfo> list;
 				std::vector<Script::Module::ModuleSectionInfo> moduleSectionInfoList;
-				BridgeList<Script::Module::ModuleSectionInfo>::ToVector(tmpList, moduleSectionInfoList, true);
+				BridgeList<Script::Module::ModuleSectionInfo>::ToVector(tmpList.get(), moduleSectionInfoList, true);
+				list.reserve(moduleSectionInfoList.size());
 				for (auto it = moduleSectionInfoList.begin(); it != moduleSectionInfoList.end(); it++)
 				{
 					pyModuleSectionInfo item = { 0 };
 					item.addr = it->addr;
 					item.name = it->name;
 					item.size = it->size;
-					list->push_back(item);
+					list.push_back(item);
 				}
+				return list;
 			}
-			delete tmpList;
-			return list;
+			return std::nullopt;
 		}
 
-		pyModuleInfo* GetMainModuleInfo()
+		std::optional<pyModuleInfo> GetMainModuleInfo()
 		{
 			Script::Module::ModuleInfo tmpInfo = { 0 };
 			if (Script::Module::GetMainModuleInfo(&tmpInfo))
 			{
-				pyModuleInfo* info = new pyModuleInfo();
-				info->base = tmpInfo.base;
-				info->entry = tmpInfo.entry;
-				info->name = tmpInfo.name;
-				info->path = tmpInfo.path;
-				info->sectionCount = tmpInfo.sectionCount;
-				info->size = tmpInfo.size;
+				pyModuleInfo info;
+				info.base = tmpInfo.base;
+				info.entry = tmpInfo.entry;
+				info.name = tmpInfo.name;
+				info.path = tmpInfo.path;
+				info.sectionCount = tmpInfo.sectionCount;
+				info.size = tmpInfo.size;
 				return info;
 			}
 			else
-				return nullptr;
+				return std::nullopt;
 		}
 
 		std::string GetMainModuleName()
@@ -675,37 +678,37 @@ namespace PyWrapper
 			return retPath;
 		}
 
-		std::vector<pyModuleSectionInfo>* GetMainModuleSectionList()
+		std::optional<std::vector<pyModuleSectionInfo>> GetMainModuleSectionList()
 		{
-			std::vector<pyModuleSectionInfo>* list = nullptr;
-			ListOf(Script::Module::ModuleSectionInfo) tmpList = new ListInfo();
-			if (Script::Module::GetMainModuleSectionList(tmpList))
+			auto tmpList = std::make_unique<ListInfo>();
+			if (Script::Module::GetMainModuleSectionList(tmpList.get()))
 			{
-				list = new std::vector<pyModuleSectionInfo>();
+				std::vector<pyModuleSectionInfo> list;
 				std::vector<Script::Module::ModuleSectionInfo> sectionList;
-				BridgeList<Script::Module::ModuleSectionInfo>::ToVector(tmpList, sectionList, true);
+				BridgeList<Script::Module::ModuleSectionInfo>::ToVector(tmpList.get(), sectionList, true);
+				list.reserve(sectionList.size());
 				for (auto it = sectionList.begin(); it != sectionList.end(); it++)
 				{
 					pyModuleSectionInfo item;
 					item.addr = it->addr;
 					item.name = it->name;
 					item.size = it->size;
-					list->push_back(item);
+					list.push_back(item);
 				}
+				return list;
 			}
-			delete tmpList;
-			return list;
+			return std::nullopt;
 		}
 
-		std::vector<pyModuleInfo>* GetList()
+		std::optional<std::vector<pyModuleInfo>> GetList()
 		{
-			std::vector<pyModuleInfo>* list = nullptr;
-			ListOf(Script::Module::ModuleInfo) tmpList = new ListInfo();
-			if (Script::Module::GetList(tmpList))
+			auto tmpList = std::make_unique<ListInfo>();
+			if (Script::Module::GetList(tmpList.get()))
 			{
-				list = new std::vector<pyModuleInfo>();
+				std::vector<pyModuleInfo> list;
 				std::vector<Script::Module::ModuleInfo> moduleInfoList;
-				BridgeList<Script::Module::ModuleInfo>::ToVector(tmpList, moduleInfoList, true);
+				BridgeList<Script::Module::ModuleInfo>::ToVector(tmpList.get(), moduleInfoList, true);
+				list.reserve(moduleInfoList.size());
 				for (auto it = moduleInfoList.begin(); it != moduleInfoList.end(); it++)
 				{
 					pyModuleInfo item;
@@ -715,17 +718,16 @@ namespace PyWrapper
 					item.path = it->path;
 					item.sectionCount = it->sectionCount;
 					item.size = it->size;
-					list->push_back(item);
+					list.push_back(item);
 				}
+				return list;
 			}
-			delete tmpList;
-			return list;
+			return std::nullopt;
 		}
 
-		std::vector<pyModuleExport>* GetExports(const pyModuleInfo* mod)
+		std::optional<std::vector<pyModuleExport>> GetExports(const pyModuleInfo* mod)
 		{
-			std::vector<pyModuleExport>* list = nullptr;
-			ListOf(Script::Module::ModuleExport) tmpList = new ListInfo();
+			auto tmpList = std::make_unique<ListInfo>();
 
 			Script::Module::ModuleInfo tmpMod = { 0 };
 			tmpMod.base = mod->base;
@@ -734,11 +736,12 @@ namespace PyWrapper
 			strcpy_s(tmpMod.path, mod->path.c_str());
 			tmpMod.sectionCount = mod->sectionCount;
 			tmpMod.size = mod->size;
-			if (Script::Module::GetExports(&tmpMod, tmpList))
+			if (Script::Module::GetExports(&tmpMod, tmpList.get()))
 			{
-				list = new std::vector<pyModuleExport>();
+				std::vector<pyModuleExport> list;
 				std::vector<Script::Module::ModuleExport> moduleExportList;
-				BridgeList<Script::Module::ModuleExport>::ToVector(tmpList, moduleExportList, true);
+				BridgeList<Script::Module::ModuleExport>::ToVector(tmpList.get(), moduleExportList, true);
+				list.reserve(moduleExportList.size());
 				for (auto it = moduleExportList.begin(); it != moduleExportList.end(); it++)
 				{
 					pyModuleExport item;
@@ -749,18 +752,17 @@ namespace PyWrapper
 					item.rva = it->rva;
 					item.undecoratedName = it->undecoratedName;
 					item.va = it->va;
-					list->push_back(item);
+					list.push_back(item);
 				}
+				return list;
 			}
 
-			delete tmpList;
-			return list;
+			return std::nullopt;
 		}
 
-		std::vector<pyModuleImport>* GetImports(const pyModuleInfo* mod)
+		std::optional<std::vector<pyModuleImport>> GetImports(const pyModuleInfo* mod)
 		{
-			std::vector<pyModuleImport>* list = nullptr;
-			ListOf(Script::Module::ModuleImport) tmpList = new ListInfo();
+			auto tmpList = std::make_unique<ListInfo>();
 
 			Script::Module::ModuleInfo tmpMod = { 0 };
 			tmpMod.base = mod->base;
@@ -770,11 +772,12 @@ namespace PyWrapper
 			tmpMod.sectionCount = mod->sectionCount;
 			tmpMod.size = mod->size;
 
-			if (Script::Module::GetImports(&tmpMod, tmpList))
+			if (Script::Module::GetImports(&tmpMod, tmpList.get()))
 			{
-				list = new std::vector<pyModuleImport>();
+				std::vector<pyModuleImport> list;
 				std::vector<Script::Module::ModuleImport> moduleImportList;
-				BridgeList<Script::Module::ModuleImport>::ToVector(tmpList, moduleImportList, true);
+				BridgeList<Script::Module::ModuleImport>::ToVector(tmpList.get(), moduleImportList, true);
+				list.reserve(moduleImportList.size());
 				for (auto it = moduleImportList.begin(); it != moduleImportList.end(); it++)
 				{
 					pyModuleImport item;
@@ -783,11 +786,11 @@ namespace PyWrapper
 					item.name = it->name;
 					item.ordinal = it->ordinal;
 					item.undecoratedName = it->undecoratedName;
-					list->push_back(item);
+					list.push_back(item);
 				}
+				return list;
 			}
-			delete tmpList;
-			return list;
+			return std::nullopt;
 		}
 	}
 
@@ -802,15 +805,15 @@ namespace PyWrapper
 			Script::Symbol::SymbolType type;
 		};
 
-		std::vector<pySymbolInfo>* GetList()
+		std::optional<std::vector<pySymbolInfo>> GetList()
 		{
-			std::vector<pySymbolInfo>* list = nullptr;
-			ListOf(Script::Symbol::SymbolInfo) tmpList = new ListInfo();
-			if (Script::Symbol::GetList(tmpList))
+			auto tmpList = std::make_unique<ListInfo>();
+			if (Script::Symbol::GetList(tmpList.get()))
 			{
-				list = new std::vector<pySymbolInfo>();
+				std::vector<pySymbolInfo> list;
 				std::vector<Script::Symbol::SymbolInfo> symbolInfoList;
-				BridgeList<Script::Symbol::SymbolInfo>::ToVector(tmpList, symbolInfoList, true);
+				BridgeList<Script::Symbol::SymbolInfo>::ToVector(tmpList.get(), symbolInfoList, true);
+				list.reserve(symbolInfoList.size());
 				for (auto it = symbolInfoList.begin(); it != symbolInfoList.end(); it++)
 				{
 					pySymbolInfo item;
@@ -819,12 +822,12 @@ namespace PyWrapper
 					item.name = it->name;
 					item.rva = it->rva;
 					item.type = it->type;
-					list->push_back(item);
+					list.push_back(item);
 				}
+				return list;
 			}
 
-			delete tmpList;
-			return list;
+			return std::nullopt;
 		}
 	}
 }
