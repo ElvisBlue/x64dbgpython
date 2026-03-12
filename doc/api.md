@@ -154,7 +154,7 @@ Signature scanning.
 Reading and modifying CPU registers.
 - `Register.Get(RegisterEnum)`
 - `Register.Set(RegisterEnum, value)`
-- `Register.Size(RegisterEnum)`
+- `Register.Size()`
 - Getters/Setters for architectural wrappers: `GetCAX`/`SetCAX`, `GetCBX`, `GetCCX`, `GetCDX`, `GetCDI`, `GetCSI`, `GetCBP`, `GetCSP`, `GetCIP`, `GetCFLAGS`.
 - Getters/Setters for concrete registers (x86/x64): `GetEAX`, `GetRAX`, `GetAL`, `GetAH`, `GetRIP`, etc.
 
