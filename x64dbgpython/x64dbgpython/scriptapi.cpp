@@ -391,6 +391,13 @@ namespace PyWrapper
 			bool manual;
 		};
 
+		duint FromString(std::string label)
+		{
+			duint value = 0;
+			Script::Label::FromString(label.c_str(), &value);
+			return value;
+		}
+
 		std::string Get(duint addr)
 		{
 			char retText[MAX_LABEL_SIZE] = { 0 };
@@ -1041,7 +1048,7 @@ PYBIND11_EMBEDDED_MODULE(x64dbg, m)
 
 	//We ignore implement SCRIPT_EXPORT bool Set(const LabelInfo* info);
 	mLabel.def("Set", static_cast<bool (*)(duint, const char*, bool)>(&Label::Set));
-	mLabel.def("FromString", &Label::FromString);
+	mLabel.def("FromString", &PyWrapper::Label::FromString);
 	mLabel.def("Get", &PyWrapper::Label::Get);
 	mLabel.def("GetInfo", &PyWrapper::Label::GetInfo);
 	mLabel.def("Delete", &Label::Delete);
