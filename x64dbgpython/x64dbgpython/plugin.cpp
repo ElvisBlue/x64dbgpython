@@ -12,6 +12,7 @@ bool g_IsScriptRunning = false;
 bool g_Interupt = false;
 HANDLE g_hThread = NULL;
 const ICONDATA g_icon = {mainICO, sizeof(mainICO)};
+PyThreadState* g_MainThreadState = nullptr;
 
 bool OpenFileDialog(char*, size_t);
 
@@ -36,6 +37,7 @@ int InteruptCheck(PyObject* obj, _frame* frame, int what, PyObject* arg)
 
 void __stdcall PyExecuteFileThread(char* fileBuffer)
 {
+    py::gil_scoped_acquire acquire;
     g_IsScriptRunning = true;
 
     //Setup hook function to check break
@@ -116,6 +118,7 @@ void PluginHandleMenuCommand(CBTYPE cbType, PLUG_CB_MENUENTRY* info)
 
 void __stdcall PyCommandExecuteThread(char* cmd)
 {
+    py::gil_scoped_acquire acquire;
     g_IsScriptRunning = true;
     try
     {
@@ -173,6 +176,8 @@ bool pluginInit(PLUG_INITSTRUCT* initStruct)
     //Import x64dbg module by default
     py::exec("from x64dbg import *");
 
+    g_MainThreadState = PyEval_SaveThread();
+
     return true;
 }
 
@@ -183,6 +188,11 @@ void pluginStop()
     if ((g_IsScriptRunning) && (!g_Interupt))
         g_Interupt = true;
     
+    if (g_MainThreadState != nullptr) {
+        PyEval_RestoreThread(g_MainThreadState);
+        g_MainThreadState = nullptr;
+    }
+
     py::finalize_interpreter();
 }
 

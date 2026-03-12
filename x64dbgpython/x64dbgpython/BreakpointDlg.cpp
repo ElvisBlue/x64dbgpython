@@ -21,6 +21,7 @@ void PluginHandleBreakpoint(CBTYPE cbType, PLUG_CB_BREAKPOINT* info)
 	std::map<duint, std::string>::const_iterator iter = g_BreakpointList.find(CalcBpHash(info->breakpoint));
 	if (iter != g_BreakpointList.end())
 	{
+		py::gil_scoped_acquire acquire;
 		try
 		{
 			py::exec(iter->second.c_str());
