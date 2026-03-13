@@ -357,7 +357,7 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>Default</LanguageStandard_C>
-      <AdditionalIncludeDirectories>.\PythonLibs\Python310\x86\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\PythonLibs\Python312\x86\include;.</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -365,7 +365,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>.\PythonLibs\Python310\x86\libs</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>.\PythonLibs\Python312\x86\libs</AdditionalLibraryDirectories>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
     </Link>
