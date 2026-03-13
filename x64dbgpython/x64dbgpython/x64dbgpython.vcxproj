@@ -39,6 +39,22 @@
     <ClCompile Include="plugin.cpp" />
     <ClCompile Include="pluginmain.cpp" />
     <ClCompile Include="scriptapi.cpp" />
+    <ClCompile Include="scriptapi\wrapper_argument.cpp" />
+    <ClCompile Include="scriptapi\wrapper_assembler.cpp" />
+    <ClCompile Include="scriptapi\wrapper_bookmark.cpp" />
+    <ClCompile Include="scriptapi\wrapper_comment.cpp" />
+    <ClCompile Include="scriptapi\wrapper_debug.cpp" />
+    <ClCompile Include="scriptapi\wrapper_flag.cpp" />
+    <ClCompile Include="scriptapi\wrapper_function.cpp" />
+    <ClCompile Include="scriptapi\wrapper_gui.cpp" />
+    <ClCompile Include="scriptapi\wrapper_label.cpp" />
+    <ClCompile Include="scriptapi\wrapper_memory.cpp" />
+    <ClCompile Include="scriptapi\wrapper_misc.cpp" />
+    <ClCompile Include="scriptapi\wrapper_module.cpp" />
+    <ClCompile Include="scriptapi\wrapper_pattern.cpp" />
+    <ClCompile Include="scriptapi\wrapper_register.cpp" />
+    <ClCompile Include="scriptapi\wrapper_stack.cpp" />
+    <ClCompile Include="scriptapi\wrapper_symbol.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BreakpointDlg.h" />
@@ -124,6 +140,7 @@
     <ClInclude Include="pybind11\warnings.h" />
     <ClInclude Include="pystream.h" />
     <ClInclude Include="resource1.h" />
+    <ClInclude Include="scriptapi\wrapper.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="pluginsdk\x32bridge.lib" />

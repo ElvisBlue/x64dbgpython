@@ -42,6 +42,54 @@
     <ClCompile Include="scriptapi.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="scriptapi\wrapper_argument.cpp">
+      <Filter>Source Files\scriptapi</Filter>
+    </ClCompile>
+    <ClCompile Include="scriptapi\wrapper_assembler.cpp">
+      <Filter>Source Files\scriptapi</Filter>
+    </ClCompile>
+    <ClCompile Include="scriptapi\wrapper_bookmark.cpp">
+      <Filter>Source Files\scriptapi</Filter>
+    </ClCompile>
+    <ClCompile Include="scriptapi\wrapper_comment.cpp">
+      <Filter>Source Files\scriptapi</Filter>
+    </ClCompile>
+    <ClCompile Include="scriptapi\wrapper_debug.cpp">
+      <Filter>Source Files\scriptapi</Filter>
+    </ClCompile>
+    <ClCompile Include="scriptapi\wrapper_flag.cpp">
+      <Filter>Source Files\scriptapi</Filter>
+    </ClCompile>
+    <ClCompile Include="scriptapi\wrapper_function.cpp">
+      <Filter>Source Files\scriptapi</Filter>
+    </ClCompile>
+    <ClCompile Include="scriptapi\wrapper_gui.cpp">
+      <Filter>Source Files\scriptapi</Filter>
+    </ClCompile>
+    <ClCompile Include="scriptapi\wrapper_label.cpp">
+      <Filter>Source Files\scriptapi</Filter>
+    </ClCompile>
+    <ClCompile Include="scriptapi\wrapper_memory.cpp">
+      <Filter>Source Files\scriptapi</Filter>
+    </ClCompile>
+    <ClCompile Include="scriptapi\wrapper_misc.cpp">
+      <Filter>Source Files\scriptapi</Filter>
+    </ClCompile>
+    <ClCompile Include="scriptapi\wrapper_module.cpp">
+      <Filter>Source Files\scriptapi</Filter>
+    </ClCompile>
+    <ClCompile Include="scriptapi\wrapper_pattern.cpp">
+      <Filter>Source Files\scriptapi</Filter>
+    </ClCompile>
+    <ClCompile Include="scriptapi\wrapper_register.cpp">
+      <Filter>Source Files\scriptapi</Filter>
+    </ClCompile>
+    <ClCompile Include="scriptapi\wrapper_stack.cpp">
+      <Filter>Source Files\scriptapi</Filter>
+    </ClCompile>
+    <ClCompile Include="scriptapi\wrapper_symbol.cpp">
+      <Filter>Source Files\scriptapi</Filter>
+    </ClCompile>
     <ClCompile Include="BreakpointDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
