@@ -41,7 +41,7 @@ namespace PyWrapper
 
 }
 
-void init_wrapper_symbol(py::module_& m)
+void InitWrapperSymbol(py::module_& m)
 {
 	//Implement module Symbol
 	py::module mSymbol = m.def_submodule("Symbol", "x64dbg Symbol python script wrapper");

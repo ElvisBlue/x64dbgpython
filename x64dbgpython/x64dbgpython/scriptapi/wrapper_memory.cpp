@@ -36,7 +36,7 @@ namespace PyWrapper
 
 }
 
-void init_wrapper_memory(py::module_& m)
+void InitWrapperMemory(py::module_& m)
 {
 	//Implement module Memory
 	py::module mMemory = m.def_submodule("Memory", "x64dbg Memory python script wrapper");

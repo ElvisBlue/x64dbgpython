@@ -1,6 +1,6 @@
 #include "wrapper.h"
 
-void init_wrapper_pattern(py::module_& m)
+void InitWrapperPattern(py::module_& m)
 {
 	//Implement module Pattern
 	py::module mPattern = m.def_submodule("Pattern", "x64dbg Pattern python script wrapper");

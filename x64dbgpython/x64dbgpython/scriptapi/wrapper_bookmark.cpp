@@ -53,7 +53,7 @@ namespace PyWrapper
 
 }
 
-void init_wrapper_bookmark(py::module_& m)
+void InitWrapperBookmark(py::module_& m)
 {
 	//Implement python module Bookmark
 	//We ignore to implement SCRIPT_EXPORT bool Add(const ArgumentInfo* info);

@@ -57,7 +57,7 @@ namespace PyWrapper
 
 }
 
-void init_wrapper_function(py::module_& m)
+void InitWrapperFunction(py::module_& m)
 {
 	//Implement module Function
 	py::module mFunction = m.def_submodule("Function", "x64dbg Function python script wrapper");

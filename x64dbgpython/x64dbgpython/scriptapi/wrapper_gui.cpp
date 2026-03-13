@@ -97,7 +97,7 @@ namespace PyWrapper
 
 }
 
-void init_wrapper_gui(py::module_& m)
+void InitWrapperGui(py::module_& m)
 {
 	//Implement module Gui
 	py::module mGui = m.def_submodule("Gui", "x64dbg Gui python script wrapper");

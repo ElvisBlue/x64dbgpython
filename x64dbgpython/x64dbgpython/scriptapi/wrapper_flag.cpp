@@ -1,6 +1,6 @@
 #include "wrapper.h"
 
-void init_wrapper_flag(py::module_& m)
+void InitWrapperFlag(py::module_& m)
 {
 	//Implement module Flag
 	py::module mFlag = m.def_submodule("Flag", "x64dbg Flag python script wrapper");

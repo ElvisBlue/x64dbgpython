@@ -60,7 +60,7 @@ namespace PyWrapper
 
 }
 
-void init_wrapper_argument(py::module_& m)
+void InitWrapperArgument(py::module_& m)
 {
 	//Implement python module Argument
 	py::module mArgument = m.def_submodule("Argument", "x64dbg Argument python script wrapper");

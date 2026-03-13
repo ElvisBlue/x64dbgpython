@@ -69,7 +69,7 @@ namespace PyWrapper
 
 }
 
-void init_wrapper_label(py::module_& m)
+void InitWrapperLabel(py::module_& m)
 {
 	//Implement module Label
 	py::module mLabel = m.def_submodule("Label", "x64dbg Label python script wrapper");

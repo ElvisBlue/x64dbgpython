@@ -1,6 +1,6 @@
 #include "wrapper.h"
 
-void init_wrapper_register(py::module_& m)
+void InitWrapperRegister(py::module_& m)
 {
 	//Implement module Register
 	py::module mRegister = m.def_submodule("Register", "x64dbg Register python script wrapper");

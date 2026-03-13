@@ -46,7 +46,7 @@ namespace PyWrapper
 
 }
 
-void init_wrapper_assembler(py::module_& m)
+void InitWrapperAssembler(py::module_& m)
 {
 	//Implement python module Assembler
 	py::module mAssembler = m.def_submodule("Assembler", "x64dbg Assembler python script wrapper");

@@ -327,7 +327,7 @@ namespace PyWrapper
 
 }
 
-void init_wrapper_module(py::module_& m)
+void InitWrapperModule(py::module_& m)
 {
 	//Implement module Module
 	py::module mModule = m.def_submodule("Module", "x64dbg Module python script wrapper");

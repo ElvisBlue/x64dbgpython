@@ -21,7 +21,7 @@ namespace PyWrapper
 
 }
 
-void init_wrapper_stack(py::module_& m)
+void InitWrapperStack(py::module_& m)
 {
 	//Implement module Stack
 	py::module mStack = m.def_submodule("Stack", "x64dbg Stack python script wrapper");

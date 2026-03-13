@@ -31,6 +31,9 @@
     <Filter Include="pybind11\detail">
       <UniqueIdentifier>{90c83fdc-8fdb-48c3-a3e6-b40aa5cb8ca1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\scriptapi">
+      <UniqueIdentifier>{237a0692-5f21-4871-a07b-d57f66b281d3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="plugin.cpp">
@@ -40,6 +43,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="scriptapi.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BreakpointDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="scriptapi\wrapper_argument.cpp">
@@ -89,9 +95,6 @@
     </ClCompile>
     <ClCompile Include="scriptapi\wrapper_symbol.cpp">
       <Filter>Source Files\scriptapi</Filter>
-    </ClCompile>
-    <ClCompile Include="BreakpointDlg.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -343,6 +346,9 @@
     </ClInclude>
     <ClInclude Include="pybind11\detail\value_and_holder.h">
       <Filter>pybind11\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="scriptapi\wrapper.h">
+      <Filter>Source Files\scriptapi</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

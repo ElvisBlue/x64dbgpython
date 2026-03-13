@@ -61,7 +61,7 @@ namespace PyWrapper
 
 }
 
-void init_wrapper_comment(py::module_& m)
+void InitWrapperComment(py::module_& m)
 {
 	//Implement module comment
 	py::module mComment = m.def_submodule("Comment", "x64dbg Comment python script wrapper");

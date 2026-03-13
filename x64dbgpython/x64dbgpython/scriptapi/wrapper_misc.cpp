@@ -14,7 +14,7 @@ namespace PyWrapper
 
 }
 
-void init_wrapper_misc(py::module_& m)
+void InitWrapperMisc(py::module_& m)
 {
 	//Implement module Misc
 	py::module mMisc = m.def_submodule("Misc", "x64dbg Misc python script wrapper");

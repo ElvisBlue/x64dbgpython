@@ -1,6 +1,6 @@
 #include "wrapper.h"
 
-void init_wrapper_debug(py::module_& m)
+void InitWrapperDebug(py::module_& m)
 {
 	//Implement module Debug
 	py::module mDebug = m.def_submodule("Debug", "x64dbg Debug python script wrapper");
